@@ -307,5 +307,5 @@ def algorithm_ep_gradual(file_path_1, file_path_2, min_sup):
         print(error)
 
 
-algorithm_ep_gradual('FluTopicData.csv', 'FluTopicData.csv', .1)
+algorithm_ep_gradual('../../../data/FluTopicData.csv', '../../../data/FluTopicData.csv', .1)
 

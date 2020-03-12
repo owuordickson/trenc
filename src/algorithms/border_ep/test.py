@@ -934,7 +934,7 @@ def algorithm_ep_fuzzy(filename, ref_item, minsup, minrep):
 # ------------------------- main method ----------------------------------------------------
 
 
-cols, data = DataTransform.test_dataset('FluTopicData.csv')
+cols, data = DataTransform.test_dataset('../../../data/FluTopicData.csv')
 if cols:
     print("true")
 else:
