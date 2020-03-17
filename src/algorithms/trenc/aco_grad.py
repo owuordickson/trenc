@@ -13,7 +13,7 @@ import numpy as np
 import random as rand
 # import matplotlib.pyplot as plt
 # from src import FuzzyMF
-from algorithms.tgraank.fuzzy_mf import FuzzyMF
+from algorithms.trenc.fuzzy_mf import FuzzyMF
 
 
 class GradACO:

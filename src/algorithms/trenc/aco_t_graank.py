@@ -13,12 +13,11 @@ Description: updated version that uses aco-graank and parallel multi-processing
 
 """
 
-# from joblib import Parallel, delayed
 import multiprocessing as mp
 # from src import HandleData, GradACO, InitParallel
-from algorithms.ant_colony.aco_grad import GradACO
-from algorithms.handle_data.handle_data import HandleData
-from algorithms.handle_data.multiprocess import InitParallel
+from algorithms.trenc.aco_grad import GradACO
+from algorithms.trenc.handle_data import HandleData
+from algorithms.trenc.multiprocess import InitParallel
 
 
 class TgradACO:
