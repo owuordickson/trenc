@@ -35,7 +35,9 @@ class Trenc:
             else:
                 self.cores = InitParallel.get_num_cores()
         self.d_sets = self.get_csv_data()
-        if len(self.d_sets) <= 1:
+        if (len(self.d_sets) <= 1) and self.min_rep is None:
+            raise Exception("min_representativity and/or reference column required")
+        elif (len(self.d_sets) <= 1) and (self.min_rep is not None):
             d_set = self.d_sets[0]
             self.tg_set = TgradACO(d_set, self.ref_item,
                                    self.min_sup, self.min_rep, 0)
@@ -81,6 +83,19 @@ class Trenc:
             return [data, time_diffs]
         else:
             return False
+
+    def run_trenc(self):
+        ep_list = list()
+        if self.min_rep is None:
+            # run aco-tgrad (single file)
+            return ep_list
+        else:
+            # run aco-grad (multiple files)
+            return ep_list
+
+    def extract_eps(self):
+        d_sets = self.d_sets
+        return None
 
     @staticmethod
     def fetch_csv_data(path):
