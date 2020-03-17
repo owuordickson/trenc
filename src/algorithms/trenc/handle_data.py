@@ -20,8 +20,8 @@ class HandleData:
         self.raw_data = HandleData.read_csv(file_path)
         if len(self.raw_data) == 0:
             self.data = False
-            print("csv file read error")
-            raise Exception("Unable to read csv file")
+            # print("csv file read error")
+            raise Exception("Unable to read csv data from "+str(file_path))
         else:
             print("Data fetched from csv file")
             self.data = self.raw_data
