@@ -26,6 +26,7 @@ class Trenc:
         self.ref_item = ref_item
         self.min_rep = min_rep
         self.min_sup = min_sup
+        self.titles = []
 
         if allow_para == 0:
             self.allow_parallel = False
@@ -72,13 +73,18 @@ class Trenc:
             return d_sets
 
     def run_trenc(self, ds_id = 0):
-        ep_list = self.fetch_patterns()
-        for obj in ep_list:
-            print(obj.data.title)
-            print(obj.extracted_patterns)
-            print(obj.sup_matrix)
-            print("\n")
-        return ep_list
+        # test titles
+        ok = self.compare_ds_titles()
+        if not ok:
+            raise Exception("Data sets have different columns")
+        else:
+            ep_list = self.fetch_patterns()
+            for obj in ep_list:
+                # print(obj.data.title)
+                print(obj.extracted_patterns)
+                print(obj.sup_matrix)
+                print("\n")
+            return ep_list
 
     def fetch_patterns(self):
         if self.allow_parallel:
@@ -117,6 +123,25 @@ class Trenc:
         else:
             raise Exception("one of the data sets is not valid")
 
+    def compare_ds_titles(self):
+        if self.min_rep is not None:
+            self.titles = self.d_sets[0][0].title
+            return True
+        else:
+            for d_set in self.d_sets:
+                titles_1 = d_set.title
+                for obj_set in self.d_sets:
+                    titles_2 = obj_set.title
+                    if titles_1 != titles_2:
+                        continue
+                    else:
+                        for title_1 in titles_1:
+                            ok = Trenc.test_titles(title_1, titles_2)
+                            if not ok:
+                                return False
+            self.titles = self.d_sets[0].title
+            return True
+
     def fetch_transform_data(self, step):
         tg_set = self.tg_set
         step += 1  # because for-loop is not inclusive from range: 0 - max_step
@@ -143,12 +168,21 @@ class Trenc:
             return False
 
     @staticmethod
+    def test_titles(title_1, titles_2):
+        for item_2 in titles_2:
+            title_2 = item_2[1]
+            if title_1[1] == title_2:
+                return True
+        return False
+
+    @staticmethod
     def test_paths(path_str):
         try:
             path_list = [x.strip() for x in path_str.split(',')]
             for path in path_list:
                 if path == '':
                     path_list.remove(path)
+            path_list = list(dict.fromkeys(path_list))
             return path_list
         except ValueError:
             return list(path_str)
