@@ -26,7 +26,7 @@ class TgradACO:
         self.d_set = d_set
         cols = d_set.get_time_cols()
         if len(cols) > 0:
-            print("Dataset Ok")
+            # print("Dataset Ok")
             self.time_ok = True
             self.time_cols = cols
             self.min_sup = min_sup

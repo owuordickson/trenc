@@ -21,9 +21,12 @@ class GradACO:
         self.data = d_set
         self.attr_index = self.data.attr_index
         self.e_factor = 0  # evaporation factor
-        self.p_matrix = np.ones((self.data.column_size, 3), dtype=int)
+        self.p_matrix = np.ones((self.data.column_size, 3), dtype=float)
+        self.st_matrix = np.zeros((self.data.column_size, 3), dtype=int)
         self.valid_bins = []
         self.invalid_bins = []
+        self.extracted_patterns = []
+        self.sup_matrix = []
 
     def run_ant_colony(self, min_supp, time_diffs=None):
         all_sols = list()
@@ -67,7 +70,7 @@ class GradACO:
                     if supp and (supp >= min_supp):  # and ([supp, sol_gen] not in win_sols):
                         if [supp, sol_gen] not in win_sols:
                             win_sols.append([supp, sol_gen])
-                            self.update_pheromone(sol_gen)
+                            self.update_pheromone(sol_gen, supp)
                             if time_diffs is not None:
                                 win_lag_sols.append([supp, lag_sols])
                             # converging = self.check_convergence()
@@ -89,9 +92,11 @@ class GradACO:
         # print("Losers: "+str(len(loss_sols)))
         # print(count)
         if time_diffs is None:
+            self.extracted_patterns = win_sols
             return GradACO.remove_subsets(win_sols)
             # return win_sols
         else:
+            self.extracted_patterns = win_lag_sols
             return GradACO.remove_subsets(win_lag_sols, True)
             # return win_lag_sols
 
@@ -162,7 +167,8 @@ class GradACO:
             supp, new_pattern = GradACO.perform_bin_and(bin_data, size, min_supp, gen_pattern, time_diffs)
             return supp, new_pattern
 
-    def update_pheromone(self, pattern):
+    def update_pheromone(self, pattern, sup):
+        # self.steps += 1
         lst_attr = []
         for obj in pattern:
             attr = int(obj[0])
@@ -170,14 +176,16 @@ class GradACO:
             symbol = obj[1]
             i = attr - 1
             if symbol == '+':
-                self.p_matrix[i][0] += 1
+                self.p_matrix[i][0] += sup
+                self.st_matrix[i][0] += 1
             elif symbol == '-':
-                self.p_matrix[i][1] += 1
+                self.p_matrix[i][1] += sup
+                self.st_matrix[i][1] += 1
         for index in self.data.attr_index:
             if int(index) not in lst_attr:
                 # print(obj)
                 i = int(index) - 1
-                self.p_matrix[i][2] += 1
+                self.p_matrix[i][2] += sup
 
     def plot_pheromone_matrix(self):
         x_plot = np.array(self.p_matrix)

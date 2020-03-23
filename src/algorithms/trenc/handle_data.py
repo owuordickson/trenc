@@ -23,7 +23,7 @@ class HandleData:
             # print("csv file read error")
             raise Exception("Unable to read csv data from "+str(file_path))
         else:
-            print("Data fetched from csv file")
+            # print("Data fetched from csv file")
             self.data = self.raw_data
             self.title = self.get_title()
             self.attr_index = self.get_attributes()
