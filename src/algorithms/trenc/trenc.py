@@ -112,11 +112,13 @@ class Trenc:
             ac.run_ant_colony(self.min_sup, time_diffs)
             p_matrix = (ac.p_matrix - 1)
             st_matrix = ac.st_matrix
-            # If you don't pass `out` the indices where (b == 0)
-            # will be uninitialized!
-            sup_matrix = np.divide(p_matrix, st_matrix,
-                                   out=np.zeros_like(p_matrix), where=st_matrix != 0)
-            ac.sup_matrix = sup_matrix
+
+            with np.errstate(divide='ignore', invalid='ignore'):
+                temp = np.true_divide(p_matrix, st_matrix)
+                temp[temp == np.inf] = 0  # convert inf to 0
+                temp = np.nan_to_num(temp)  # convert Nan to 0
+
+            ac.sup_matrix = temp
             return ac
         else:
             raise Exception("one of the data sets is not valid")
@@ -132,8 +134,8 @@ class Trenc:
                 else:
                     with np.errstate(divide='ignore', invalid='ignore'):
                         temp = np.true_divide(GR_matrix, matrix)
-                        temp[temp == np.inf] = 0
-                        temp = np.nan_to_num(temp)
+                        temp[temp == np.inf] = 0  # convert inf to 0
+                        temp = np.nan_to_num(temp)  # convert Nan to 0
                     GR_matrix = temp
             return GR_matrix
         else:
