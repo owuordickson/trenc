@@ -130,7 +130,10 @@ class Trenc:
                 if np.array_equal(GR_matrix, matrix):
                     continue
                 else:
-                    temp = np.divide(GR_matrix, matrix, out=np.zeros_like(GR_matrix), where=matrix != 0)
+                    with np.errstate(divide='ignore', invalid='ignore'):
+                        temp = np.true_divide(GR_matrix, matrix)
+                        temp[temp == np.inf] = 0
+                        temp = np.nan_to_num(temp)
                     GR_matrix = temp
             return GR_matrix
         else:
