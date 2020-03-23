@@ -134,7 +134,7 @@ class Trenc:
                     GR_matrix = temp
             return GR_matrix
         else:
-            raise Exception("Selected data-set/ file does not exist")
+            raise Exception("Selected data-set/file does not exist")
 
     def compare_ds_titles(self):
         if self.min_rep is not None:
@@ -145,7 +145,7 @@ class Trenc:
                 titles_1 = d_set.title
                 for obj_set in self.d_sets:
                     titles_2 = obj_set.title
-                    if titles_1 != titles_2:
+                    if titles_1 == titles_2:
                         continue
                     else:
                         for title_1 in titles_1:

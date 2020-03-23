@@ -2,11 +2,11 @@
 from src.algorithms.trenc.trenc import Trenc
 
 
-def init_trenc(paths, min_sup=0.5, ref_item=1, cores=0, allow_para=0, min_rep=0.5):
+def init_trenc(paths, min_sup=0.5, ref_item=None, cores=0, allow_para=0, min_rep=None):
     wr_line = ""
     # ep_set = Trenc(paths, 0.5)
     ep_set = Trenc(paths, min_sup, cores, allow_para, min_rep, ref_item)
-    ep_set.run_trenc()
+    ep_set.run_trenc(0)
 
     titles = ep_set.titles
     if ref_item is not None:
@@ -26,4 +26,4 @@ def init_trenc(paths, min_sup=0.5, ref_item=1, cores=0, allow_para=0, min_rep=0.
     print(wr_line)
 
 
-init_trenc('../data/DATASET.csv,../data/DATASET.csv')
+init_trenc('../data/DATASET.csv,../data/test.csv')
