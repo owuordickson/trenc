@@ -82,13 +82,7 @@ class Trenc:
         else:
             self.ep_list = self.fetch_patterns()
             self.GR_matrix = self.gen_GR_matrix(set_id)
-            for obj in self.ep_list:
-                print(obj.extracted_patterns)
-                # print(obj.sup_matrix)
-                # print("\n")
-            print(self.ep_list[0].sup_matrix)
-            print(self.GR_matrix)
-            return self.GR_matrix
+            # return self.GR_matrix
 
     def fetch_patterns(self):
         if self.allow_parallel:
