@@ -134,6 +134,8 @@ class Trenc:
                 else:
                     with np.errstate(divide='ignore', invalid='ignore'):
                         temp = np.true_divide(GR_matrix, matrix)
+                        # inf means that the pattern is missing in 1 or more
+                        # data-sets (JEP), so we remove it by converting it to 0
                         temp[temp == np.inf] = 0  # convert inf to 0
                         temp = np.nan_to_num(temp)  # convert Nan to 0
                     GR_matrix = temp
