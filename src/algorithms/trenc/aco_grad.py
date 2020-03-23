@@ -174,7 +174,7 @@ class GradACO:
             attr = int(obj[0])
             lst_attr.append(attr)
             symbol = obj[1]
-            i = attr - 1
+            i = attr
             if symbol == '+':
                 self.p_matrix[i][0] += sup
                 self.st_matrix[i][0] += 1

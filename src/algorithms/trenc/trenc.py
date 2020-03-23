@@ -86,6 +86,7 @@ class Trenc:
                 print(obj.extracted_patterns)
                 # print(obj.sup_matrix)
                 # print("\n")
+            print(self.ep_list[0].sup_matrix)
             print(self.GR_matrix)
             return self.GR_matrix
 
