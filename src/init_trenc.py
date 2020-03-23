@@ -2,17 +2,17 @@
 from src.algorithms.trenc.trenc import Trenc
 
 
-def init_trenc(paths, min_sup=0.5, cores=0, allow_para=0, min_rep=0.5, ref_item=1):
+def init_trenc(paths, min_sup=0.5, ref_item=1, cores=0, allow_para=0, min_rep=0.5):
     wr_line = ""
     # ep_set = Trenc(paths, 0.5)
-    ep_set = Trenc(paths, 0.5, cores, allow_para, min_rep, ref_item)
+    ep_set = Trenc(paths, min_sup, cores, allow_para, min_rep, ref_item)
     # print(ep_set.d_sets)
     ep_set.run_trenc()
 
     titles = ep_set.titles
     if ref_item is not None:
         for txt in titles:
-            col = (int(txt[0]) - 1)
+            col = int(txt[0])
             if col == ref_item:
                 wr_line += (str(col) + '. ' + str(txt[1]) + '**' + '\n')
             else:

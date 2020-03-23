@@ -27,6 +27,8 @@ class Trenc:
         self.min_rep = min_rep
         self.min_sup = min_sup
         self.titles = []
+        self.ep_list = []
+        self.GR_matrix = []
 
         if allow_para == 0:
             self.allow_parallel = False
@@ -72,19 +74,20 @@ class Trenc:
                 d_sets.append(d_set)
             return d_sets
 
-    def run_trenc(self, ds_id = 0):
+    def run_trenc(self, set_id=0):
         # test titles
         ok = self.compare_ds_titles()
         if not ok:
             raise Exception("Data sets have different columns")
         else:
-            ep_list = self.fetch_patterns()
-            for obj in ep_list:
-                # print(obj.data.title)
+            self.ep_list = self.fetch_patterns()
+            self.GR_matrix = self.gen_GR_matrix(set_id)
+            for obj in self.ep_list:
                 print(obj.extracted_patterns)
-                print(obj.sup_matrix)
-                print("\n")
-            return ep_list
+                # print(obj.sup_matrix)
+                # print("\n")
+            print(self.GR_matrix)
+            return self.GR_matrix
 
     def fetch_patterns(self):
         if self.allow_parallel:
@@ -122,6 +125,21 @@ class Trenc:
             return ac
         else:
             raise Exception("one of the data sets is not valid")
+
+    def gen_GR_matrix(self, ds_id):
+        ep_list = self.ep_list
+        if ds_id < len(ep_list):
+            GR_matrix = ep_list[ds_id].sup_matrix
+            for ep in ep_list:
+                matrix = ep.sup_matrix
+                if np.array_equal(GR_matrix, matrix):
+                    continue
+                else:
+                    temp = np.divide(GR_matrix, matrix, out=np.zeros_like(GR_matrix), where=matrix != 0)
+                    GR_matrix = temp
+            return GR_matrix
+        else:
+            raise Exception("Selected data-set/ file does not exist")
 
     def compare_ds_titles(self):
         if self.min_rep is not None:
