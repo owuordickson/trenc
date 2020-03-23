@@ -74,6 +74,8 @@ class Trenc:
     def run_trenc(self, ds_id = 0):
         ep_list = self.fetch_patterns()
         for obj in ep_list:
+            print(obj.data.title)
+            print(obj.extracted_patterns)
             print(obj.sup_matrix)
             print("\n")
         return ep_list
