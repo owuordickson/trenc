@@ -200,20 +200,54 @@ class Trenc:
                 jep.append(pat)
                 # continue
             elif dir_ > 0 and not ep:
-                pat_pos = [tuple([attr, sign])]
-                pat_neg = [tuple([attr, sign])]
-                gr_pos = gr_neg = dir_
+                pat_pos = [[tuple([attr, sign])], dir_]
+                pat_neg = [[tuple([attr, sign])], dir_]
                 for j in range(i+1, size, 1):
                     row_j = GR_matrix[j]
-
-                    pat_pos, gr_pos = Trenc.combine_patterns(pat_pos, row_j, j, '+', gr_pos)
-                    pat_neg, gr_neg = Trenc.combine_patterns(pat_neg, row_j, j, '-', gr_neg)
-                ep.append([pat_pos, gr_pos])
-                ep.append([pat_neg, gr_neg])
+                    pat_pos = Trenc.combine_patterns_test1(pat_pos, row_j, j, '+')
+                    pat_neg = Trenc.combine_patterns_test1(pat_neg, row_j, j, '-')
+                ep.append(pat_pos)
+                ep.append(pat_neg)
                 # continue
         ep = False if not ep else ep
         jep = False if not jep else jep
         return ep, jep
+
+    @staticmethod
+    def combine_patterns_test2(pat, row, attr, gr, pos=False):
+        # new_gr = gr[:]
+        # gr_neg = gr
+        # pat = pat
+        # pat_neg = pat
+
+        if not pos:
+            patterns = [None]*2
+            incr = row[0]
+            if incr > 0:
+                temp = tuple([attr, '+'])
+                pat[0].append(temp)
+                if incr < gr[:]:
+                    pat[1] = incr
+                else:
+                    pat[1] = gr[:]
+                patterns[0] = pat
+            # else:
+            #    pat = []
+        else:
+
+            cp = pat[0][:]
+            temp = tuple([attr, '+'])
+            cp.remove(temp) if cp else cp
+
+            decr = row[1]
+            if decr > 0:
+                temp = tuple([attr, '-'])
+                pat[0].append(temp)
+                if decr < gr:
+                    pat[1] = decr
+            # else:
+            #    pat = []
+            return pat
 
     @staticmethod
     def combine_patterns_test(pat, row, attr, sign, gr):
@@ -244,8 +278,7 @@ class Trenc:
         return [pat_pos, gr_pos], [pat_neg, gr_neg]
 
     @staticmethod
-    def combine_patterns(pat, row, attr, sign, gr):
-        new_gr = gr
+    def combine_patterns_test1(pat, row, attr, sign):
         if sign == '+':
             dir_ = row[0]
         elif sign == '-':
@@ -254,12 +287,12 @@ class Trenc:
             return [], 0
         if dir_ > 0:
             temp = tuple([attr, sign])
-            pat.append(temp)
-            if dir_ < gr:
-                new_gr = dir_
-            return pat, new_gr
+            pat[0].append(temp)
+            if dir_ < pat[1]:
+                pat[1] = dir_
+            return pat
         else:
-            return [], 0
+            return []
 
     @staticmethod
     def gen_GR_matrix(ds_id, gp_list):

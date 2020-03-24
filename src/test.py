@@ -23,7 +23,7 @@ def fetch_pats(n, pat, pos=False):
     else:
         cp = pat[0][:]
         temp = str(n) + '+'
-        cp.remove(temp)
+        del cp[-1] if cp else cp
         temp = str(n)+'-'
         cp.append(temp)
         pat[1] = cp
