@@ -198,32 +198,39 @@ class Trenc:
             if dir_ == -1 and not jep:
                 pat = tuple([attr, sign])
                 jep.append(pat)
-                continue
+                # continue
             elif dir_ > 0 and not ep:
-                pat = [tuple([attr, sign])]
-                gr = dir_
+                pat_pos = [tuple([attr, sign])]
+                pat_neg = [tuple([attr, sign])]
+                gr_pos = gr_neg = dir_
                 for j in range(i+1, size, 1):
                     row_j = GR_matrix[j]
-                    pat, gr = Trenc.combine_patterns(pat, row_j, j, gr)
-                ep.append(pat)
-                # if gr == 0 or dir_ < gr:
-                #    gr = dir_
-                continue
-        ep = False if not ep else [ep, gr]
+                    pat_pos, gr_pos = Trenc.combine_patterns(pat_pos, row_j, j, '+', gr_pos)
+                    pat_neg, gr_neg = Trenc.combine_patterns(pat_neg, row_j, j, '-', gr_neg)
+                ep.append([pat_pos, gr_pos])
+                ep.append([pat_neg, gr_neg])
+                # continue
+        ep = False if not ep else ep
         jep = False if not jep else jep
         return ep, jep
 
     @staticmethod
-    def combine_patterns(pat, row, attr, gr):
+    def combine_patterns(pat, row, attr, sign, gr):
         new_gr = gr
-        incr = row[0]
-        decr = row[1]
-        if incr > 0:
-            temp = tuple([attr, '+'])
+        if sign == '+':
+            dir_ = row[0]
+        elif sign == '-':
+            dir_ = row[1]
+        else:
+            return [], 0
+        if dir_ > 0:
+            temp = tuple([attr, sign])
             pat.append(temp)
-            if incr < gr:
-                new_gr = incr
-        return pat, new_gr
+            if dir_ < gr:
+                new_gr = dir_
+            return pat, new_gr
+        else:
+            return [], 0
 
     @staticmethod
     def gen_GR_matrix(ds_id, gp_list):
