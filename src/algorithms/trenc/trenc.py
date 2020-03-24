@@ -195,11 +195,11 @@ class Trenc:
                 dir_ = row[1]
             else:
                 return False, False
-            if dir_ == -1:
+            if dir_ == -1 and not jep:
                 pat = tuple([attr, sign])
                 jep.append(pat)
                 continue
-            elif dir_ > 0:
+            elif dir_ > 0 and not ep:
                 pat = tuple([attr, sign])
                 ep.append(pat)
                 if gr == 0 or dir_ < gr:
