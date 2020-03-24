@@ -20,9 +20,9 @@ def init_trenc(paths, min_sup=0.5, ref_item=1, cores=0, allow_para=0, min_rep=0.
         for txt in titles:
             wr_line += (str(txt[0]) + '. ' + str(txt[1]) + '\n')
 
-    for obj in ep_set.ep_list:
-        wr_line += str(obj.extracted_patterns) + '\n'
-    wr_line += str(ep_set.GR_matrix)
+    # for obj in ep_set.gp_list:
+    #    wr_line += str(obj.extracted_patterns) + '\n'
+    wr_line += str(ep_set.GR_list)
     print(wr_line)
 
 

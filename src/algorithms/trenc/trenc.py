@@ -27,8 +27,8 @@ class Trenc:
         self.min_rep = min_rep
         self.min_sup = min_sup
         self.titles = []
-        self.ep_list = []
-        self.GR_matrix = []
+        self.gp_list = []
+        self.GR_list = []
 
         if allow_para == 0:
             self.allow_parallel = False
@@ -80,9 +80,9 @@ class Trenc:
         if not ok:
             raise Exception("Data sets have different columns")
         else:
-            self.ep_list = self.fetch_patterns()
-            self.GR_matrix = self.gen_GR_matrix(set_id)
-            # return self.GR_matrix
+            self.gp_list = self.fetch_patterns()
+            self.GR_list = self.gen_GR_matrix(set_id)
+            # return self.GR_list
 
     def fetch_patterns(self):
         if self.allow_parallel:
@@ -124,11 +124,13 @@ class Trenc:
             raise Exception("one of the data sets is not valid")
 
     def gen_GR_matrix(self, ds_id):
-        ep_list = self.ep_list
-        if ds_id < len(ep_list):
-            GR_matrix = ep_list[ds_id].sup_matrix
-            for ep in ep_list:
-                matrix = ep.sup_matrix
+        GR_list = list()
+        gp_list = self.gp_list
+        if ds_id < len(gp_list):
+            gp_1 = gp_list[ds_id]
+            GR_matrix = gp_1.sup_matrix
+            for gp_2 in gp_list:
+                matrix = gp_2.sup_matrix
                 if np.array_equal(GR_matrix, matrix):
                     continue
                 else:
@@ -139,7 +141,9 @@ class Trenc:
                         temp[temp == np.inf] = 0  # convert inf to 0
                         temp = np.nan_to_num(temp)  # convert Nan to 0
                     GR_matrix = temp
-            return GR_matrix
+                    GR = [GR_matrix, gp_1.extracted_patterns, gp_2.extracted_patterns]
+                    GR_list.append(GR)
+            return GR_list
         else:
             raise Exception("Selected data-set/file does not exist")
 
@@ -176,6 +180,11 @@ class Trenc:
             return [tg_set.d_set, time_diffs]
         else:
             raise Exception("Problem with representativity: "+str(rep_info))
+
+    @staticmethod
+    def construct_eps(GR_list):
+        ep_list = list()
+        return ep_list
 
     @staticmethod
     def fetch_csv_data(path):
