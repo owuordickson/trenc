@@ -214,39 +214,34 @@ class Trenc:
         return ep, jep
 
     @staticmethod
-    def combine_patterns_test2(pat, row, attr, gr, pos=False):
+    def combine_patterns_test2(pat, row, attr, pos=False):
         # new_gr = gr[:]
         # gr_neg = gr
         # pat = pat
         # pat_neg = pat
-
         if not pos:
             patterns = [None]*2
             incr = row[0]
             if incr > 0:
                 temp = tuple([attr, '+'])
                 pat[0].append(temp)
-                if incr < gr[:]:
+                if incr < pat[1][:]:
                     pat[1] = incr
-                else:
-                    pat[1] = gr[:]
                 patterns[0] = pat
-            # else:
-            #    pat = []
+            return Trenc.combine_patterns_test2(patterns, row, attr, pos=True)
         else:
-
             cp = pat[0][:]
+            # gr = cp[1]
             temp = tuple([attr, '+'])
-            cp.remove(temp) if cp else cp
+            cp[0].remove(temp) if cp[0] else cp[0]
 
             decr = row[1]
             if decr > 0:
                 temp = tuple([attr, '-'])
-                pat[0].append(temp)
-                if decr < gr:
-                    pat[1] = decr
-            # else:
-            #    pat = []
+                cp[0].append(temp)
+                if decr < cp[1][:]:
+                    cp[1] = decr
+                pat[1] = cp
             return pat
 
     @staticmethod

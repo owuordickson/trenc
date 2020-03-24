@@ -16,19 +16,19 @@ def test_1():
 def fetch_pats(n, pat, pos=False):
     if not pos:
         pats = [None]*2
-        temp = str(n)+'+'
+        temp = tuple([n, '+'])
         pat.append(temp)
         pats[0] = pat
         return fetch_pats(n, pats, pos=True)
     else:
         cp = pat[0][:]
-        temp = str(n) + '+'
-        del cp[-1] if cp else cp
-        temp = str(n)+'-'
+        temp = tuple([n, '+'])
+        cp.remove(temp) if cp else cp
+        temp = tuple([n, '-'])
         cp.append(temp)
         pat[1] = cp
         return pat
 
 
-patterns = fetch_pats(3, list(['1+', '2-']))
+patterns = fetch_pats(3, list([tuple([1, '+']), tuple([2, '-'])]))
 print(patterns)
