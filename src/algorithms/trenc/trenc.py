@@ -81,6 +81,7 @@ class Trenc:
         else:
             gp_list = self.fetch_patterns()
             self.GR_list = Trenc.gen_GR_matrix(set_id, gp_list)
+            Trenc.fetch_eps(self.GR_list)
             # return self.GR_list
 
     def fetch_patterns(self):
@@ -154,20 +155,63 @@ class Trenc:
             tg_set.d_set.lst_bin = []
             return [tg_set.d_set, time_diffs]
         else:
-            raise Exception("Problem with representativity: "+str(rep_info))
+            raise Exception("Problem with representativity: " + str(rep_info))
 
     @staticmethod
     def fetch_eps(GR_list):
         ep_list = list()
         for GR in GR_list:
-            eps = Trenc.construct_eps(GR[0])
+            eps, jeps = Trenc.construct_eps(GR[0])
+            print([eps, jeps])
         return ep_list
 
     @staticmethod
     def construct_eps(GR_matrix):
         eps = list()
-        jeps = list()
+        jeps = list()  # coded as -1 in GR_matrix
 
+        size = len(GR_matrix)
+        ep = list()
+        jep = list()
+        gr = 0
+        for i in range(size):
+            attr = i
+            row = GR_matrix[i]
+            incr = row[0]
+            if incr == -1:
+                pat = tuple([attr, '+'])
+                jep.append(pat)
+                continue
+            elif incr > 0:
+                pat = tuple([attr, '+'])
+                ep.append(pat)
+                if gr == 0 or incr < gr:
+                    gr = incr
+                # ep.append([pat, incr])
+                continue
+        eps.append([ep, gr]) if ep else eps
+        jeps.append(jep) if jep else jeps
+
+        ep = list()
+        jep = list()
+        gr = 0
+        for i in range(size):
+            attr = i
+            row = GR_matrix[i]
+            decr = row[1]
+            if decr == -1:
+                pat = tuple([attr, '-'])
+                jep.append(pat)
+                continue
+            elif decr > 0:
+                pat = tuple([attr, '-'])
+                ep.append(pat)
+                if gr == 0 or decr < gr:
+                    gr = decr
+                # ep.append([pat, decr])
+                continue
+        eps.append([ep, gr]) if ep else eps
+        jeps.append(jep) if jep else jeps
         return eps, jeps
 
     @staticmethod
