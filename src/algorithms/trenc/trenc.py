@@ -185,14 +185,14 @@ class Trenc:
         size = len(GR_matrix)
         ep = list()
         jep = list()
-        gr = 0
+        # gr = 0
         for i in range(size):
             attr = i
-            row = GR_matrix[i]
+            row_i = GR_matrix[i]
             if sign == '+':
-                dir_ = row[0]
+                dir_ = row_i[0]
             elif sign == '-':
-                dir_ = row[1]
+                dir_ = row_i[1]
             else:
                 return False, False
             if dir_ == -1 and not jep:
@@ -200,14 +200,30 @@ class Trenc:
                 jep.append(pat)
                 continue
             elif dir_ > 0 and not ep:
-                pat = tuple([attr, sign])
+                pat = [tuple([attr, sign])]
+                gr = dir_
+                for j in range(i+1, size, 1):
+                    row_j = GR_matrix[j]
+                    pat, gr = Trenc.combine_patterns(pat, row_j, j, gr)
                 ep.append(pat)
-                if gr == 0 or dir_ < gr:
-                    gr = dir_
+                # if gr == 0 or dir_ < gr:
+                #    gr = dir_
                 continue
         ep = False if not ep else [ep, gr]
         jep = False if not jep else jep
         return ep, jep
+
+    @staticmethod
+    def combine_patterns(pat, row, attr, gr):
+        new_gr = gr
+        incr = row[0]
+        decr = row[1]
+        if incr > 0:
+            temp = tuple([attr, '+'])
+            pat.append(temp)
+            if incr < gr:
+                new_gr = incr
+        return pat, new_gr
 
     @staticmethod
     def gen_GR_matrix(ds_id, gp_list):
