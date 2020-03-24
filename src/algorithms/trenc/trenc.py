@@ -205,6 +205,7 @@ class Trenc:
                 gr_pos = gr_neg = dir_
                 for j in range(i+1, size, 1):
                     row_j = GR_matrix[j]
+
                     pat_pos, gr_pos = Trenc.combine_patterns(pat_pos, row_j, j, '+', gr_pos)
                     pat_neg, gr_neg = Trenc.combine_patterns(pat_neg, row_j, j, '-', gr_neg)
                 ep.append([pat_pos, gr_pos])
@@ -213,6 +214,34 @@ class Trenc:
         ep = False if not ep else ep
         jep = False if not jep else jep
         return ep, jep
+
+    @staticmethod
+    def combine_patterns_test(pat, row, attr, sign, gr):
+        gr_pos = gr
+        gr_neg = gr
+        pat_pos = pat
+        pat_neg = pat
+        incr = row[0]
+        decr = row[1]
+
+        if incr > 0:
+            temp = tuple([attr, '+'])
+            pat_pos.append(temp)
+            if incr < gr_pos:
+                gr_pos = incr
+        else:
+            pat_pos = []
+            gr_pos = 0
+
+        if decr > 0:
+            temp = tuple([attr, '-'])
+            pat_neg.append(temp)
+            if decr < gr_neg:
+                gr_neg = decr
+        else:
+            pat_neg = []
+            gr_neg = 0
+        return [pat_pos, gr_pos], [pat_neg, gr_neg]
 
     @staticmethod
     def combine_patterns(pat, row, attr, sign, gr):
