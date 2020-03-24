@@ -170,6 +170,18 @@ class Trenc:
         eps = list()
         jeps = list()  # coded as -1 in GR_matrix
 
+        ep, jep = Trenc.init_gen_ep(GR_matrix, '+')
+        eps.append(ep) if ep else eps
+        jeps.append(jep) if jep else jeps
+
+        ep, jep = Trenc.init_gen_ep(GR_matrix, '-')
+        eps.append(ep) if ep else eps
+        jeps.append(jep) if jep else jeps
+
+        return eps, jeps
+
+    @staticmethod
+    def init_gen_ep(GR_matrix, sign):
         size = len(GR_matrix)
         ep = list()
         jep = list()
@@ -177,42 +189,25 @@ class Trenc:
         for i in range(size):
             attr = i
             row = GR_matrix[i]
-            incr = row[0]
-            if incr == -1:
-                pat = tuple([attr, '+'])
+            if sign == '+':
+                dir_ = row[0]
+            elif sign == '-':
+                dir_ = row[1]
+            else:
+                return False, False
+            if dir_ == -1:
+                pat = tuple([attr, sign])
                 jep.append(pat)
                 continue
-            elif incr > 0:
-                pat = tuple([attr, '+'])
+            elif dir_ > 0:
+                pat = tuple([attr, sign])
                 ep.append(pat)
-                if gr == 0 or incr < gr:
-                    gr = incr
-                # ep.append([pat, incr])
+                if gr == 0 or dir_ < gr:
+                    gr = dir_
                 continue
-        eps.append([ep, gr]) if ep else eps
-        jeps.append(jep) if jep else jeps
-
-        ep = list()
-        jep = list()
-        gr = 0
-        for i in range(size):
-            attr = i
-            row = GR_matrix[i]
-            decr = row[1]
-            if decr == -1:
-                pat = tuple([attr, '-'])
-                jep.append(pat)
-                continue
-            elif decr > 0:
-                pat = tuple([attr, '-'])
-                ep.append(pat)
-                if gr == 0 or decr < gr:
-                    gr = decr
-                # ep.append([pat, decr])
-                continue
-        eps.append([ep, gr]) if ep else eps
-        jeps.append(jep) if jep else jeps
-        return eps, jeps
+        ep = False if not ep else [ep, gr]
+        jep = False if not jep else jep
+        return ep, jep
 
     @staticmethod
     def gen_GR_matrix(ds_id, gp_list):
