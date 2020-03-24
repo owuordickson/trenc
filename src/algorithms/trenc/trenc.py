@@ -27,7 +27,6 @@ class Trenc:
         self.min_rep = min_rep
         self.min_sup = min_sup
         self.titles = []
-        self.gp_list = []
         self.GR_list = []
 
         if allow_para == 0:
@@ -80,8 +79,8 @@ class Trenc:
         if not ok:
             raise Exception("Data sets have different columns")
         else:
-            self.gp_list = self.fetch_patterns()
-            self.GR_list = self.gen_GR_matrix(set_id)
+            gp_list = self.fetch_patterns()
+            self.GR_list = Trenc.gen_GR_matrix(set_id, gp_list)
             # return self.GR_list
 
     def fetch_patterns(self):
@@ -123,30 +122,6 @@ class Trenc:
         else:
             raise Exception("one of the data sets is not valid")
 
-    def gen_GR_matrix(self, ds_id):
-        GR_list = list()
-        gp_list = self.gp_list
-        if ds_id < len(gp_list):
-            gp_1 = gp_list[ds_id]
-            GR_matrix = gp_1.sup_matrix
-            for gp_2 in gp_list:
-                matrix = gp_2.sup_matrix
-                if np.array_equal(GR_matrix, matrix):
-                    continue
-                else:
-                    with np.errstate(divide='ignore', invalid='ignore'):
-                        temp = np.true_divide(GR_matrix, matrix)
-                        # inf means that the pattern is missing in 1 or more
-                        # data-sets (JEP), so we remove it by converting it to 0
-                        temp[temp == np.inf] = 0  # convert inf to 0
-                        temp = np.nan_to_num(temp)  # convert Nan to 0
-                    GR_matrix = temp
-                    GR = [GR_matrix, gp_1.extracted_patterns, gp_2.extracted_patterns]
-                    GR_list.append(GR)
-            return GR_list
-        else:
-            raise Exception("Selected data-set/file does not exist")
-
     def compare_ds_titles(self):
         if self.min_rep is not None:
             self.titles = self.d_sets[0][0].title
@@ -182,9 +157,42 @@ class Trenc:
             raise Exception("Problem with representativity: "+str(rep_info))
 
     @staticmethod
-    def construct_eps(GR_list):
+    def fetch_eps(GR_list):
         ep_list = list()
+        for GR in GR_list:
+            eps = Trenc.construct_eps(GR[0])
         return ep_list
+
+    @staticmethod
+    def construct_eps(GR_matrix):
+        eps = list()
+        jeps = list()
+
+        return eps, jeps
+
+    @staticmethod
+    def gen_GR_matrix(ds_id, gp_list):
+        GR_list = list()
+        if ds_id < len(gp_list):
+            gp_1 = gp_list[ds_id]
+            GR_matrix = gp_1.sup_matrix
+            for gp_2 in gp_list:
+                matrix = gp_2.sup_matrix
+                if np.array_equal(GR_matrix, matrix):
+                    continue
+                else:
+                    with np.errstate(divide='ignore', invalid='ignore'):
+                        temp = np.true_divide(GR_matrix, matrix)
+                        # inf means that the pattern is missing in 1 or more
+                        # data-sets (JEP), so we remove it by converting it to 0
+                        temp[temp == np.inf] = -1  # convert inf to -1
+                        temp = np.nan_to_num(temp)  # convert Nan to 0
+                    # print(str([temp, GR_matrix, matrix]) + "\n")
+                    GR = [temp, gp_1.extracted_patterns, gp_2.extracted_patterns]
+                    GR_list.append(GR)
+            return GR_list
+        else:
+            raise Exception("Selected data-set/file does not exist")
 
     @staticmethod
     def fetch_csv_data(path):
