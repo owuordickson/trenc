@@ -111,7 +111,7 @@ class Trenc:
             ac = GradACO(d_set)
             ac.run_ant_colony(self.min_sup, time_diffs)
             p_matrix = (ac.p_matrix - 1)
-            st_matrix = ac.st_matrix
+            st_matrix = ac.steps_matrix
 
             with np.errstate(divide='ignore', invalid='ignore'):
                 temp = np.true_divide(p_matrix, st_matrix)
@@ -168,6 +168,31 @@ class Trenc:
     @staticmethod
     def construct_eps(GR_matrix):
         eps = list()
+        jeps = list()
+        size = len(GR_matrix)
+        ep = list()
+        jep = list()
+        for i in range(size):
+            attr = i
+            row_i = GR_matrix[i]
+            incr = row_i[0]
+            decr = row_i[1]
+            if incr == -1:
+                temp = tuple([attr, '+'])
+                jep.append(temp)
+            elif incr > 1:
+                temp = [tuple([attr, '+']), incr]
+                ep.append(temp)
+            if decr == -1:
+                temp = tuple([attr, '-'])
+                jep.append(temp)
+            elif decr > 1:
+                temp = [tuple([attr, '-']), decr]
+                ep.append(temp)
+
+    @staticmethod
+    def construct_eps1(GR_matrix):
+        eps = list()
         jeps = list()  # coded as -1 in GR_matrix
 
         ep, jep = Trenc.init_gen_ep(GR_matrix, '+')
@@ -204,6 +229,7 @@ class Trenc:
                 pat_neg = [[tuple([attr, sign])], dir_]
                 for j in range(i+1, size, 1):
                     row_j = GR_matrix[j]
+                    pat = Trenc.get_n_set(pat_pos, pat_neg)
                     pat_pos = Trenc.combine_patterns_test1(pat_pos, row_j, j, '+')
                     pat_neg = Trenc.combine_patterns_test1(pat_neg, row_j, j, '-')
                 ep.append(pat_pos)
@@ -212,6 +238,12 @@ class Trenc:
         ep = False if not ep else ep
         jep = False if not jep else jep
         return ep, jep
+
+    @staticmethod
+    def get_n_set(pat_pos, pat_neg):
+        pat = list()
+
+        return pat
 
     @staticmethod
     def combine_patterns_test2(pat, row, attr, pos=False):

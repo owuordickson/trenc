@@ -22,7 +22,8 @@ class GradACO:
         self.attr_index = self.data.attr_index
         self.e_factor = 0  # evaporation factor
         self.p_matrix = np.ones((self.data.column_size, 3), dtype=float)
-        self.st_matrix = np.zeros((self.data.column_size, 3), dtype=int)
+        self.steps_matrix = np.zeros((self.data.column_size, 3), dtype=int)
+        self.tstamp_matrix = np.zeros((self.data.column_size, 3), dtype=float)
         self.valid_bins = []
         self.invalid_bins = []
         self.extracted_patterns = []
