@@ -1,3 +1,31 @@
+def construct_tgps1(GR_matrix, gp1_tstamps, gp2_tstamps):
+        ep1 = []
+        ep2 = []
+        ep = []
+        jep = []
+        size = len(GR_matrix)
+        gp1_stamps = gp1_tstamps
+        gp2_stamps = gp2_tstamps
+        for i in range(size):
+            row_1 = gp1_stamps[i]
+            row_2 = gp2_stamps[i]
+            for j in range(len(row_1)):
+                col_1 = row_1[j]
+                col_2 = row_2[j]
+                for t_stamp in col_1:
+                    pattern, gp1_stamps = Trenc.find_same_stamps(t_stamp, gp1_stamps)
+                    if pattern and (pattern not in ep1):
+                        ep1.append(pattern)
+                for t_stamp in col_2:
+                    pattern, gp2_stamps = Trenc.find_same_stamps(t_stamp, gp2_stamps)
+                    if pattern and (pattern not in ep2):
+                        ep2.append(pattern)
+        print(ep1)
+        print(ep2)
+        print('end')
+        return ep, jep
+
+
 def construct_eps(GR_matrix):
     eps = list()
     jeps = list()
