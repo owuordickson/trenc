@@ -81,7 +81,7 @@ class Trenc:
         else:
             gp_list = self.fetch_patterns()
             self.GR_list = Trenc.gen_GR_matrix(set_id, gp_list)
-            Trenc.fetch_eps(self.GR_list)
+            Trenc.construct_eps(self.GR_list)
             # return self.GR_list
 
     def fetch_patterns(self):
@@ -158,26 +158,31 @@ class Trenc:
             raise Exception("Problem with representativity: " + str(rep_info))
 
     @staticmethod
-    def fetch_eps(GR_list):
-        ep_list = list()
+    def construct_eps(GR_list):
+        tgp1 = False
         for GR in GR_list:
-            # eps, jeps = Trenc.construct_eps(GR)
-            Trenc.construct_eps(GR)
-            # print([eps, jeps])
-        return ep_list
+            GR_matrix = GR[0]
+            gp1_stamps = GR[1].tstamp_matrix
+            gp2_stamps = GR[2].tstamp_matrix
+            # eps = list()
+            # jeps = list()
+            if not gp1_stamps:
+                eps, jeps = Trenc.construct_gps(GR_matrix)
+            else:
+                # eps, jeps = Trenc.construct_tgps1(GR_matrix, gp1_stamps, gp2_stamps)
+                if not tgp1:
+                    tgp1 = Trenc.construct_tgps(GR_matrix, gp1_stamps)
+                if tgp1:
+                    tgp2 = Trenc.construct_tgps(GR_matrix, gp2_stamps)
+                print(tgp1)
+                print(tgp2)
+                print('end')
 
     @staticmethod
-    def construct_eps(GR):
-        GR_matrix = GR[0]
-        gp1_stamps = GR[1].tstamp_matrix
-        gp2_stamps = GR[2].tstamp_matrix
-        # eps = list()
-        # jeps = list()
-        if not gp1_stamps:
-            eps, jeps = Trenc.construct_gps(GR_matrix)
-        else:
-            # eps, jeps = Trenc.construct_tgps1(GR_matrix, gp1_stamps, gp2_stamps)
-            tgp = Trenc.construct_tgps(GR_matrix, gp1_stamps)
+    def fetch_eps(GR_list):
+        ep_list = list()
+        Trenc.construct_eps(GR_list)
+        return ep_list
 
     @staticmethod
     def construct_gps(GR_matrix):
@@ -233,7 +238,6 @@ class Trenc:
                     pattern, gp1_stamps = Trenc.find_same_stamps(t_stamp, gp_stamps)
                     if pattern and (pattern not in tgp):
                         tgp.append(pattern)
-        # print(tgp)
         return tgp
 
     @staticmethod
