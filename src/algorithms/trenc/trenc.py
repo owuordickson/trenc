@@ -176,7 +176,8 @@ class Trenc:
         if not gp1_stamps:
             eps, jeps = Trenc.construct_gps(GR_matrix)
         else:
-            eps, jeps = Trenc.construct_tgps(GR_matrix, gp1_stamps, gp2_stamps)
+            # eps, jeps = Trenc.construct_tgps1(GR_matrix, gp1_stamps, gp2_stamps)
+            tgp = Trenc.construct_tgps(GR_matrix, gp1_stamps)
 
     @staticmethod
     def construct_gps(GR_matrix):
@@ -220,20 +221,51 @@ class Trenc:
         return ep, jep
 
     @staticmethod
-    def construct_tgps(GR_matrix, gp1_stamps=False, gp2_stamps=False):
-        eps = list()
-        jeps = list()
+    def construct_tgps(GR_matrix, gp_tstamps):
+        tgp = []
+        size = len(GR_matrix)
+        gp_stamps = gp_tstamps
+        for i in range(size):
+            row = gp_stamps[i]
+            for j in range(len(row)):
+                col = row[j]
+                for t_stamp in col:
+                    pattern, gp1_stamps = Trenc.find_same_stamps(t_stamp, gp_stamps)
+                    if pattern and (pattern not in tgp):
+                        tgp.append(pattern)
+        # print(tgp)
+        return tgp
 
-        return eps, jeps
+    @staticmethod
+    def construct_tgps1(GR_matrix, gp1_tstamps, gp2_tstamps):
+        ep1 = []
+        ep2 = []
+        ep = []
+        jep = []
+        size = len(GR_matrix)
+        gp1_stamps = gp1_tstamps
+        gp2_stamps = gp2_tstamps
+        for i in range(size):
+            row_1 = gp1_stamps[i]
+            row_2 = gp2_stamps[i]
+            for j in range(len(row_1)):
+                col_1 = row_1[j]
+                col_2 = row_2[j]
+                for t_stamp in col_1:
+                    pattern, gp1_stamps = Trenc.find_same_stamps(t_stamp, gp1_stamps)
+                    if pattern and (pattern not in ep1):
+                        ep1.append(pattern)
+                for t_stamp in col_2:
+                    pattern, gp2_stamps = Trenc.find_same_stamps(t_stamp, gp2_stamps)
+                    if pattern and (pattern not in ep2):
+                        ep2.append(pattern)
+        print(ep1)
+        print(ep2)
+        print('end')
+        return ep, jep
 
     @staticmethod
     def combine_patterns(pat, row, attr):
-        # if sign == '+':
-        #    dir_ = row[0]
-        # elif sign == '-':
-        #    dir_ = row[1]
-        # else:
-        #    return [], 0
         if row[0] > 0:
             dir_ = row[0]
             sign = '+'
@@ -251,6 +283,34 @@ class Trenc:
             return pat
         else:
             return []
+
+    @staticmethod
+    def find_same_stamps(t_stamp, stamp_matrix):
+        attrs = list()
+        patterns = []
+        size = len(stamp_matrix)
+        for i in range(size):
+            attr = i
+            row = stamp_matrix[i]
+            for j in range(len(row)):
+                stamps = stamp_matrix[i][j]
+                if t_stamp in stamps:
+                    # print([t_stamp, stamps, 'true'])
+                    if j == 0:
+                        sign = '+'
+                    elif j == 1:
+                        sign = '-'
+                    else:
+                        continue
+                    pat = tuple([attr, sign])
+                    if (pat not in patterns) and (attr not in attrs):
+                        attrs.append(attr)
+                        patterns.append(pat)
+                    stamp_matrix[i][j].remove(t_stamp)
+        if len(patterns) > 1:
+            return [patterns, t_stamp], stamp_matrix
+        else:
+            return False, stamp_matrix
 
     @staticmethod
     def gen_GR_matrix(ds_id, gp_list):
