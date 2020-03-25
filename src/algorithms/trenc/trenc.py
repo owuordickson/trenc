@@ -171,14 +171,16 @@ class Trenc:
         GR_matrix = GR[0]
         gp1_stamps = GR[1].tstamp_matrix
         gp2_stamps = GR[2].tstamp_matrix
-        eps = list()
-        jeps = list()
-        size = len(GR_matrix)
-
-        print(GR_matrix)
+        # eps = list()
+        # jeps = list()
+        if not gp1_stamps:
+            eps, jeps = Trenc.construct_gps(GR_matrix)
+        else:
+            eps, jeps = Trenc.construct_tgps(GR_matrix, gp1_stamps, gp2_stamps)
 
         ep = list()
         jep = list()
+        size = len(GR_matrix)
         for i in range(size):
             attr = i
             row_i = GR_matrix[i]
@@ -196,6 +198,31 @@ class Trenc:
             elif decr > 1:
                 temp = [tuple([attr, '-']), decr]
                 ep.append(temp)
+
+    @staticmethod
+    def construct_gps(GR_matrix):
+        eps = list()
+        jeps = list()
+        size = len(GR_matrix)
+
+        # 1. normalize GR_matrix (pick largest GR for every attribute)
+        for i in range(size):
+            row = GR_matrix[i]
+            if (row[0] >= row[1]) and (row[1] != -1):
+                GR_matrix[i][1] = 0
+            elif (row[1] >= row[0]) and (row[0] != -1):
+                GR_matrix[i][0] = 0
+
+        # 2. construct eps
+
+        return eps, jeps
+
+    @staticmethod
+    def construct_tgps(GR_matrix, gp1_stamps=False, gp2_stamps=False):
+        eps = list()
+        jeps = list()
+
+        return eps, jeps
 
     @staticmethod
     def gen_GR_matrix(ds_id, gp_list):
