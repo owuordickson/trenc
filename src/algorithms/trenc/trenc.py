@@ -159,30 +159,30 @@ class Trenc:
 
     @staticmethod
     def construct_eps(GR_list):
+        eps = list()
+        jeps = list()
         tgp1 = False
         for GR in GR_list:
             GR_matrix = GR[0]
             gp1_stamps = GR[1].tstamp_matrix
             gp2_stamps = GR[2].tstamp_matrix
-            # eps = list()
-            # jeps = list()
             if not gp1_stamps:
                 eps, jeps = Trenc.construct_gps(GR_matrix)
             else:
                 # eps, jeps = Trenc.construct_tgps1(GR_matrix, gp1_stamps, gp2_stamps)
                 if not tgp1:
-                    tgp1 = Trenc.construct_tgps(GR_matrix, gp1_stamps)
+                    ok, tgp1 = Trenc.construct_tgps(GR_matrix, gp1_stamps)
                 if tgp1:
-                    tgp2 = Trenc.construct_tgps(GR_matrix, gp2_stamps)
+                    tgp1, tgp2 = Trenc.construct_tgps(GR_matrix, gp2_stamps, ep=tgp1)
                 print(tgp1)
-                print(tgp2)
                 print('end')
+        return eps, jeps
 
     @staticmethod
-    def fetch_eps(GR_list):
-        ep_list = list()
-        Trenc.construct_eps(GR_list)
-        return ep_list
+    def fetch_eps(tgp1, tgp2):
+        ep = list()
+        jep = list()
+        return ep, jep
 
     @staticmethod
     def construct_gps(GR_matrix):
@@ -226,7 +226,7 @@ class Trenc:
         return ep, jep
 
     @staticmethod
-    def construct_tgps(GR_matrix, gp_tstamps):
+    def construct_tgps(GR_matrix, gp_tstamps, ep=None):
         tgp = []
         size = len(GR_matrix)
         gp_stamps = gp_tstamps
@@ -235,10 +235,20 @@ class Trenc:
             for j in range(len(row)):
                 col = row[j]
                 for t_stamp in col:
-                    pattern, gp1_stamps = Trenc.find_same_stamps(t_stamp, gp_stamps)
-                    if pattern and (pattern not in tgp):
+                    pat, gp1_stamps = Trenc.find_same_stamps(t_stamp, gp_stamps)
+                    pattern = [pat, t_stamp]
+                    if pat and (pattern not in tgp):
                         tgp.append(pattern)
-        return tgp
+                        if ep is not None:
+                            for k in range(len(ep)):
+                                obj = ep[k]
+                                pat1 = obj[0]
+                                if pat1 == pat:
+                                    ep[k].append(t_stamp)
+        if ep is None:
+            return False, tgp
+        else:
+            return ep, tgp
 
     @staticmethod
     def construct_tgps1(GR_matrix, gp1_tstamps, gp2_tstamps):
@@ -312,7 +322,7 @@ class Trenc:
                         patterns.append(pat)
                     stamp_matrix[i][j].remove(t_stamp)
         if len(patterns) > 1:
-            return [patterns, t_stamp], stamp_matrix
+            return patterns, stamp_matrix
         else:
             return False, stamp_matrix
 
