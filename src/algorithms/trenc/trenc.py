@@ -162,7 +162,7 @@ class Trenc:
         ep_list = list()
         for GR in GR_list:
             eps, jeps = Trenc.construct_eps(GR[0])
-            print([eps, jeps])
+            # print([eps, jeps])
         return ep_list
 
     @staticmethod

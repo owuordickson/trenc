@@ -22,7 +22,7 @@ def init_trenc(paths, min_sup=0.5, ref_item=1, cores=0, allow_para=0, min_rep=0.
 
     for obj in ep_set.GR_list:
         wr_line += str(obj) + '\n'
-    print(wr_line)
+    # print(wr_line)
 
 
 init_trenc('../data/DATASET.csv')

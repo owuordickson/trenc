@@ -72,6 +72,7 @@ class GradACO:
                         if [supp, sol_gen] not in win_sols:
                             win_sols.append([supp, sol_gen])
                             self.update_pheromone(sol_gen, supp)
+                            print(lag_sols)
                             if time_diffs is not None:
                                 win_lag_sols.append([supp, lag_sols])
                             # converging = self.check_convergence()
@@ -172,16 +173,17 @@ class GradACO:
         # self.steps += 1
         lst_attr = []
         for obj in pattern:
+            # print(obj)
             attr = int(obj[0])
             lst_attr.append(attr)
             symbol = obj[1]
             i = attr
             if symbol == '+':
                 self.p_matrix[i][0] += sup
-                self.st_matrix[i][0] += 1
+                self.steps_matrix[i][0] += 1
             elif symbol == '-':
                 self.p_matrix[i][1] += sup
-                self.st_matrix[i][1] += 1
+                self.steps_matrix[i][1] += 1
         for index in self.data.attr_index:
             if int(index) not in lst_attr:
                 # print(obj)
