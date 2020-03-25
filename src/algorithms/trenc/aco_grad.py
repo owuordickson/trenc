@@ -23,7 +23,7 @@ class GradACO:
         self.e_factor = 0  # evaporation factor
         self.p_matrix = np.ones((self.data.column_size, 3), dtype=float)
         self.steps_matrix = np.zeros((self.data.column_size, 3), dtype=int)
-        self.tstamp_matrix = np.zeros((self.data.column_size, 3), dtype=float)
+        self.tstamp_matrix = [[[] for i in range(3)] for j in range(self.data.column_size)]
         self.valid_bins = []
         self.invalid_bins = []
         self.extracted_patterns = []
@@ -71,10 +71,13 @@ class GradACO:
                     if supp and (supp >= min_supp):  # and ([supp, sol_gen] not in win_sols):
                         if [supp, sol_gen] not in win_sols:
                             win_sols.append([supp, sol_gen])
-                            self.update_pheromone(sol_gen, supp)
+                            # self.update_pheromone(sol_gen, supp)
                             # print(lag_sols)
                             if time_diffs is not None:
                                 win_lag_sols.append([supp, lag_sols])
+                                self.update_pheromone(sol_gen, supp, lag_sols[2])
+                            else:
+                                self.update_pheromone(sol_gen, supp)
                             # converging = self.check_convergence()
                     elif supp and (supp < min_supp):  # and ([supp, sol_gen] not in loss_sols):
                         if [supp, sol_gen] not in loss_sols:
@@ -169,8 +172,7 @@ class GradACO:
             supp, new_pattern = GradACO.perform_bin_and(bin_data, size, min_supp, gen_pattern, time_diffs)
             return supp, new_pattern
 
-    def update_pheromone(self, pattern, sup):
-        # self.steps += 1
+    def update_pheromone(self, pattern, sup, t_stamp=None):
         lst_attr = []
         for obj in pattern:
             # print(obj)
@@ -181,9 +183,11 @@ class GradACO:
             if symbol == '+':
                 self.p_matrix[i][0] += sup
                 self.steps_matrix[i][0] += 1
+                self.tstamp_matrix[i][0].append(t_stamp)
             elif symbol == '-':
                 self.p_matrix[i][1] += sup
                 self.steps_matrix[i][1] += 1
+                self.tstamp_matrix[i][1].append(t_stamp)
         for index in self.data.attr_index:
             if int(index) not in lst_attr:
                 # print(obj)
