@@ -72,7 +72,7 @@ class GradACO:
                         if [supp, sol_gen] not in win_sols:
                             win_sols.append([supp, sol_gen])
                             self.update_pheromone(sol_gen, supp)
-                            print(lag_sols)
+                            # print(lag_sols)
                             if time_diffs is not None:
                                 win_lag_sols.append([supp, lag_sols])
                             # converging = self.check_convergence()
@@ -256,7 +256,7 @@ class GradACO:
             else:
                 t_lag, t_stamp = FuzzyMF.calculate_time_lag(FuzzyMF.get_patten_indices(final_bin), t_diffs, thd_supp)
                 if t_lag:
-                    temp_p = [pattern, t_lag]
+                    temp_p = [pattern, t_lag, t_stamp]
                     return supp, temp_p
                 else:
                     return -1, pattern
