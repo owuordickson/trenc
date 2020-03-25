@@ -1,3 +1,27 @@
+def construct_eps(GR_matrix):
+    eps = list()
+    jeps = list()
+    size = len(GR_matrix)
+    ep = list()
+    jep = list()
+    for i in range(size):
+        attr = i
+        row_i = GR_matrix[i]
+        incr = row_i[0]
+        decr = row_i[1]
+        if incr == -1:
+            temp = tuple([attr, '+'])
+            jep.append(temp)
+        elif incr > 1:
+            temp = [tuple([attr, '+']), incr]
+            ep.append(temp)
+        if decr == -1:
+            temp = tuple([attr, '-'])
+            jep.append(temp)
+        elif decr > 1:
+            temp = [tuple([attr, '-']), decr]
+            ep.append(temp)
+    return eps, jeps
 
 
 def construct_eps1(GR_matrix):

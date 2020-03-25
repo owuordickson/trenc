@@ -97,6 +97,7 @@ class GradACO:
         # print("Losers: "+str(len(loss_sols)))
         # print(count)
         if time_diffs is None:
+            self.tstamp_matrix = False
             self.extracted_patterns = win_sols
             return GradACO.remove_subsets(win_sols)
             # return win_sols

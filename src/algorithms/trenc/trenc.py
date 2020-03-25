@@ -161,15 +161,22 @@ class Trenc:
     def fetch_eps(GR_list):
         ep_list = list()
         for GR in GR_list:
-            eps, jeps = Trenc.construct_eps(GR[0])
+            # eps, jeps = Trenc.construct_eps(GR)
+            Trenc.construct_eps(GR)
             # print([eps, jeps])
         return ep_list
 
     @staticmethod
-    def construct_eps(GR_matrix):
+    def construct_eps(GR):
+        GR_matrix = GR[0]
+        gp1_stamps = GR[1].tstamp_matrix
+        gp2_stamps = GR[2].tstamp_matrix
         eps = list()
         jeps = list()
         size = len(GR_matrix)
+
+        print(GR_matrix)
+
         ep = list()
         jep = list()
         for i in range(size):
@@ -189,7 +196,6 @@ class Trenc:
             elif decr > 1:
                 temp = [tuple([attr, '-']), decr]
                 ep.append(temp)
-        return eps, jeps
 
     @staticmethod
     def gen_GR_matrix(ds_id, gp_list):
@@ -208,7 +214,7 @@ class Trenc:
                         # data-sets (JEP), so we remove it by converting it to 0
                         temp[temp == np.inf] = -1  # convert inf to -1
                         temp = np.nan_to_num(temp)  # convert Nan to 0
-                    GR = [temp, gp_1.extracted_patterns, gp_2.extracted_patterns]
+                    GR = [temp, gp_1, gp_2]
                     GR_list.append(GR)
             return GR_list
         else:
