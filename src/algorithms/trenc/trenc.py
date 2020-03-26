@@ -239,10 +239,13 @@ class Trenc:
                 print('EP')
                 gp = pat[0]
                 t_lag1 = pat[1]
+                t_lags = []
+                for i in range(2, count, 1):
+                    t_lags.append(pat[i])
+                    # print(str(pat[i]) + '*')
                 print(gp)
                 print(t_lag1)
-                for i in range(2, count, 1):
-                    print(str(pat[i]) + '*')
+                print(t_lags)
                 print('end')
         return ep, jep
 
