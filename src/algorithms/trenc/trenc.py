@@ -158,6 +158,45 @@ class Trenc:
             raise Exception("Problem with representativity: " + str(rep_info))
 
     @staticmethod
+    def gen_GR_matrix(ds_id, gp_list):
+        GR_list = list()
+        if ds_id < len(gp_list):
+            gp_1 = gp_list[ds_id]
+            GR_matrix = gp_1.sup_matrix
+            for gp_2 in gp_list:
+                matrix = gp_2.sup_matrix
+                if np.array_equal(GR_matrix, matrix):
+                    continue
+                else:
+                    with np.errstate(divide='ignore', invalid='ignore'):
+                        temp = np.true_divide(GR_matrix, matrix)
+                        # inf means that the pattern is missing in 1 or more
+                        # data-sets (JEP), so we remove it by converting it to 0
+                        temp[temp == np.inf] = -1  # convert inf to -1
+                        temp = np.nan_to_num(temp)  # convert Nan to 0
+                    # normalize stamp_matrix
+                    gp_2.tstamp_matrix = Trenc.remove_useless_stamps(temp, gp_2.tstamp_matrix)
+                    GR = [temp, gp_1, gp_2]
+                    GR_list.append(GR)
+            return GR_list
+        else:
+            raise Exception("Selected data-set/file does not exist")
+
+    @staticmethod
+    def remove_useless_stamps(GR_matrix, stamp_matrix):
+        if not stamp_matrix:
+            return stamp_matrix
+        else:
+            size = len(GR_matrix)
+            for i in range(size):
+                row = GR_matrix[i]
+                if row[0] == 0:
+                    stamp_matrix[i][0] = []
+                if row[1] == 0:
+                    stamp_matrix[i][1] = []
+            return stamp_matrix
+
+    @staticmethod
     def construct_eps(GR_list):
         eps = list()
         jeps = list()
@@ -178,7 +217,7 @@ class Trenc:
         return eps, jeps
 
     @staticmethod
-    def fetch_eps(tgp1):
+    def fetch_eps(GR_matrix, tgp1):
         ep = list()
         jep = list()
         return ep, jep
@@ -242,7 +281,7 @@ class Trenc:
                             for k in range(len(ep)):
                                 obj = ep[k]
                                 pat1 = obj[0]
-                                if pat1 == pat:
+                                if sorted(pat1) == sorted(pat):
                                     ep[k].append(t_stamp)
         if ep is None:
             return False, tgp
@@ -296,29 +335,6 @@ class Trenc:
             return patterns, stamp_matrix
         else:
             return False, stamp_matrix
-
-    @staticmethod
-    def gen_GR_matrix(ds_id, gp_list):
-        GR_list = list()
-        if ds_id < len(gp_list):
-            gp_1 = gp_list[ds_id]
-            GR_matrix = gp_1.sup_matrix
-            for gp_2 in gp_list:
-                matrix = gp_2.sup_matrix
-                if np.array_equal(GR_matrix, matrix):
-                    continue
-                else:
-                    with np.errstate(divide='ignore', invalid='ignore'):
-                        temp = np.true_divide(GR_matrix, matrix)
-                        # inf means that the pattern is missing in 1 or more
-                        # data-sets (JEP), so we remove it by converting it to 0
-                        temp[temp == np.inf] = -1  # convert inf to -1
-                        temp = np.nan_to_num(temp)  # convert Nan to 0
-                    GR = [temp, gp_1, gp_2]
-                    GR_list.append(GR)
-            return GR_list
-        else:
-            raise Exception("Selected data-set/file does not exist")
 
     @staticmethod
     def fetch_csv_data(path):

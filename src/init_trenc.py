@@ -24,7 +24,7 @@ def init_trenc(paths, min_sup=0.5, ref_item=1, cores=0, allow_para=0, min_rep=0.
         wr_line += str(obj[1].extracted_patterns) + '\n'
         wr_line += str(obj[2].extracted_patterns) + '\n'
         wr_line += '\n\n'
-    # print(wr_line)
+    print(wr_line)
 
 
 init_trenc('../data/DATASET.csv')
