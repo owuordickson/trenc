@@ -25,10 +25,10 @@ class GradACO:
         self.p_matrix = np.ones((self.data.column_size, 3), dtype=float)
         self.steps_matrix = np.zeros((self.data.column_size, 3), dtype=int)
         self.tstamp_matrix = False
+        self.sup_matrix = []
         self.valid_bins = []
         self.invalid_bins = []
         self.extracted_patterns = []
-        self.sup_matrix = []
 
     def run_ant_colony(self, min_supp, time_diffs=None):
         col_size = self.data.column_size
