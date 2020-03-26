@@ -13,6 +13,7 @@ import numpy as np
 import random as rand
 # import matplotlib.pyplot as plt
 from src.algorithms.trenc.fuzzy_mf import FuzzyMF
+from src.algorithms.trenc.GP import GP, TGP
 
 
 class GradACO:
@@ -279,14 +280,18 @@ class GradACO:
                 is_sub = GradACO.check_subset(sol, all_sols)
                 # print(is_sub)
                 if not is_sub:
-                    new_sols.append(item)
+                    if item:
+                        gp = GP(item)
+                        new_sols.append(gp)
         else:
             for item in all_sols:
                 sol = set(item[1][0])
                 is_sub = GradACO.check_subset(sol, all_sols, temporal)
                 # print(is_sub)
                 if not is_sub:
-                    new_sols.append(item)
+                    if item:
+                        tgp = TGP(item)
+                        new_sols.append(tgp)
         # print(new_sols)
         return new_sols
 
