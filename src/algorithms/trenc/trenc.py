@@ -226,30 +226,26 @@ class Trenc:
             count = len(pat)
             if count == 2:
                 # this a 'Jumping Emerging Pattern'
-                print('JEP')
                 gp = pat[0]
                 t_lag1 = pat[1]
                 jep = JEP(gp, t_lag1)
 
                 print(jep.pattern_info)
-                print('end')
+                print('end\n\n')
 
                 jeps.append(jep)
             else:
                 # a normal 'Emerging Pattern'
-                # print(str(pat) + str(count))
-                print('EP')
                 gp = pat[0]
                 t_lag1 = pat[1]
                 t_lags = []
                 for i in range(2, count, 1):
                     t_lags.append(pat[i])
-                    # print(str(pat[i]) + '*')
-
                 ep = EP(gp, 0, t_lag1, t_lags)
 
                 print(ep.pattern_info)
-                print('end')
+                print('end\n\n')
+
         return eps, jeps
 
     @staticmethod

@@ -25,11 +25,12 @@ class JEP:
     def format_info(self):
         pat = str(HandleData.format_gp(self.pattern))
         if self.t_lag is None:
-            json_txt = {"pattern": pat}
+            json_txt = {"pattern": pat, "type": "Jumping Emerging GP"}
             return json.dumps(json_txt, indent=4)
         else:
             t_lag_txt = EP.format_time_lag(self.t_lag)
-            json_txt = {"pattern": pat, "time_lag": t_lag_txt}
+            json_txt = {"pattern": pat, "type": "Jumping Emerging TGP",
+                        "time_lag": t_lag_txt}
             return json.dumps(json_txt, indent=4)
 
     @staticmethod
@@ -47,20 +48,18 @@ class EP(JEP):
         self.gr = gr  # only available for GPs
         self.t_lags = t_lags  # only available for TGPs
         super().__init__(pattern, t_lag)
-        # self.pattern = pattern
-        # self.t_lag = t_lag
-        # self.pattern_info = self.format_info()
 
     def format_info(self):
         pat = str(HandleData.format_gp(self.pattern))
         if self.t_lag is None:
-            json_txt = {"pattern": pat, "growth_rate": self.gr}
+            json_txt = {"pattern": pat, "type": "Emerging GP",
+                        "growth_rate": self.gr}
             return json.dumps(json_txt, indent=4)
         else:
             t_lag_txt = EP.format_time_lag(self.t_lag)
             if self.t_lags is None:
-                json_txt = {"pattern": pat, "time_lag": t_lag_txt,
-                            "growth_rate": self.gr}
+                json_txt = {"pattern": pat, "type": "Emerging TGP",
+                            "time_lag": t_lag_txt, "growth_rate": self.gr}
             else:
                 t_lags_txt = []
                 for obj in self.t_lags:
@@ -69,6 +68,6 @@ class EP(JEP):
                     t_lag_txt = EP.format_time_lag(t_lag)
                     txt = {"time_lag": t_lag_txt, "growth_rate": gr}
                     t_lags_txt.append(txt)
-                json_txt = {"pattern": pat, "time_lag": t_lag_txt,
-                            "emergence": t_lags_txt}
+                json_txt = {"pattern": pat, "type": "Emerging TGP",
+                            "time_lag": t_lag_txt, "emergence": t_lags_txt}
             return json.dumps(json_txt, indent=4)
