@@ -199,41 +199,45 @@ class Trenc:
 
     @staticmethod
     def construct_eps(GR_list):
-        eps = list()
-        jeps = list()
+        # eps = list()
+        # jeps = list()
+        gp = False
         tgp1 = False
         for GR in GR_list:
             GR_matrix = GR[0]
             gp1_stamps = GR[1].tstamp_matrix
             gp2_stamps = GR[2].tstamp_matrix
             if not gp1_stamps:
-                eps, jeps = Trenc.construct_gps(GR_matrix)
+                gp = Trenc.construct_gps(GR_matrix)
             else:
                 # eps, jeps = Trenc.construct_tgps1(GR_matrix, gp1_stamps, gp2_stamps)
                 if not tgp1:
                     ok, tgp1 = Trenc.construct_tgps(GR_matrix, gp1_stamps)
                 if tgp1:
                     tgp1, tgp2 = Trenc.construct_tgps(GR_matrix, gp2_stamps, ep=tgp1)
-        # print(tgp1)
-        Trenc.fetch_eps(tgp1)
+        if tgp1:
+            eps, jeps = Trenc.fetch_eps(tgp1)
+        elif gp:
+            eps, jeps = Trenc.fetch_eps(gp)
+        else:
+            return False, False
         return eps, jeps
 
     @staticmethod
-    def fetch_eps(tgp1):
+    def fetch_eps(raw_ep):
         eps = list()
         jeps = list()
-        for pat in tgp1:
+        for pat in raw_ep:
             count = len(pat)
             if count == 2:
                 # this a 'Jumping Emerging Pattern'
                 gp = pat[0]
                 t_lag1 = pat[1]
                 jep = JEP(gp, t_lag1)
+                jeps.append(jep)
 
                 print(jep.pattern_info)
                 print('end\n\n')
-
-                jeps.append(jep)
             else:
                 # a normal 'Emerging Pattern'
                 gp = pat[0]
@@ -242,10 +246,10 @@ class Trenc:
                 for i in range(2, count, 1):
                     t_lags.append(pat[i])
                 ep = EP(gp, 0, t_lag1, t_lags)
+                eps.append(ep)
 
                 print(ep.pattern_info)
                 print('end\n\n')
-
         return eps, jeps
 
     @staticmethod
