@@ -213,13 +213,23 @@ class Trenc:
                     ok, tgp1 = Trenc.construct_tgps(GR_matrix, gp1_stamps)
                 if tgp1:
                     tgp1, tgp2 = Trenc.construct_tgps(GR_matrix, gp2_stamps, ep=tgp1)
-        print(tgp1)
+        # print(tgp1)
+        Trenc.fetch_eps(tgp1)
         return eps, jeps
 
     @staticmethod
-    def fetch_eps(GR_matrix, tgp1):
+    def fetch_eps(tgp1):
         ep = list()
         jep = list()
+        for pat in tgp1:
+            count = len(pat)
+            if count == 2:
+                # this a 'Jumping Emerging Pattern'
+                jep.append(pat)
+            else:
+                # a normal 'Emerging Pattern'
+                print(str(pat) + str(count))
+
         return ep, jep
 
     @staticmethod
@@ -271,9 +281,10 @@ class Trenc:
         for i in range(size):
             row = gp_stamps[i]
             for j in range(len(row)):
+                # gr = GR_matrix[i][j]
                 col = row[j]
                 for t_stamp in col:
-                    pat, gp1_stamps = Trenc.find_same_stamps(t_stamp, gp_stamps)
+                    pat, gr, gp1_stamps = Trenc.find_same_stamps(t_stamp, gp_stamps, GR_matrix)
                     pattern = [pat, t_stamp]
                     if pat and (pattern not in tgp):
                         tgp.append(pattern)
@@ -282,7 +293,7 @@ class Trenc:
                                 obj = ep[k]
                                 pat1 = obj[0]
                                 if sorted(pat1) == sorted(pat):
-                                    ep[k].append(t_stamp)
+                                    ep[k].append([t_stamp, gr])
         if ep is None:
             return False, tgp
         else:
@@ -309,9 +320,10 @@ class Trenc:
             return []
 
     @staticmethod
-    def find_same_stamps(t_stamp, stamp_matrix):
+    def find_same_stamps(t_stamp, stamp_matrix, GR_matrix):
         attrs = list()
         patterns = []
+        gr = 0
         size = len(stamp_matrix)
         for i in range(size):
             attr = i
@@ -330,11 +342,13 @@ class Trenc:
                     if (pat not in patterns) and (attr not in attrs):
                         attrs.append(attr)
                         patterns.append(pat)
+                        temp_gr = GR_matrix[i][j]
+                        gr = temp_gr if (gr == 0) or (temp_gr < gr) else gr
                     stamp_matrix[i][j].remove(t_stamp)
         if len(patterns) > 1:
-            return patterns, stamp_matrix
+            return patterns, gr, stamp_matrix
         else:
-            return False, stamp_matrix
+            return False, gr, stamp_matrix
 
     @staticmethod
     def fetch_csv_data(path):
