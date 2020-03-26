@@ -17,6 +17,7 @@ from src.algorithms.trenc.multiprocess import InitParallel
 from src.algorithms.trenc.handle_data import HandleData
 from src.algorithms.trenc.aco_grad import GradACO
 from src.algorithms.trenc.aco_t_graank import TgradACO
+from src.algorithms.trenc.ep import EP, JEP
 
 
 class Trenc:
@@ -219,8 +220,8 @@ class Trenc:
 
     @staticmethod
     def fetch_eps(tgp1):
-        ep = list()
-        jep = list()
+        eps = list()
+        jeps = list()
         for pat in tgp1:
             count = len(pat)
             if count == 2:
@@ -228,11 +229,12 @@ class Trenc:
                 print('JEP')
                 gp = pat[0]
                 t_lag1 = pat[1]
-                print(gp)
-                print(t_lag1)
+                jep = JEP(gp, t_lag1)
+
+                print(jep.pattern_info)
                 print('end')
 
-                jep.append(pat)
+                jeps.append(jep)
             else:
                 # a normal 'Emerging Pattern'
                 # print(str(pat) + str(count))
@@ -243,11 +245,12 @@ class Trenc:
                 for i in range(2, count, 1):
                     t_lags.append(pat[i])
                     # print(str(pat[i]) + '*')
-                print(gp)
-                print(t_lag1)
-                print(t_lags)
+
+                ep = EP(gp, 0, t_lag1, t_lags)
+
+                print(ep.pattern_info)
                 print('end')
-        return ep, jep
+        return eps, jeps
 
     @staticmethod
     def construct_gps(GR_matrix):
