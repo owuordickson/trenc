@@ -224,12 +224,12 @@ class Trenc:
                 eps.append(ep)
             for jep in temp_jeps:
                 jeps.append(jep)
-        # elif gp:
-        #    eps, jeps = Trenc.fetch_eps(gp)
-        # else:
-        #    return False, False
-        for ep in jeps:
+
+        for ep in eps:
             print(ep.pattern_info)
+            print('end')
+        for jep in jeps:
+            print(jep.pattern_info)
             print('end')
         return eps, jeps
 
@@ -245,9 +245,6 @@ class Trenc:
                 t_lag1 = pat[1]
                 jep = JEP(gp, t_lag1)
                 jeps.append(jep)
-
-                print(jep.pattern_info)
-                print('end\n\n')
             else:
                 # a normal 'Emerging Pattern'
                 gp = pat[0]
@@ -257,9 +254,6 @@ class Trenc:
                     t_lags.append(pat[i])
                 ep = EP(gp, 0, t_lag1, t_lags)
                 eps.append(ep)
-
-                print(ep.pattern_info)
-                print('end\n\n')
         return eps, jeps
 
     @staticmethod
