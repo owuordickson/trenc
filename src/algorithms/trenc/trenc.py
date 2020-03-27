@@ -199,16 +199,19 @@ class Trenc:
 
     @staticmethod
     def construct_eps(GR_list):
-        # eps = list()
-        # jeps = list()
-        gp = False
+        eps = list()
+        jeps = list()
         tgp1 = False
         for GR in GR_list:
             GR_matrix = GR[0]
             gp1_stamps = GR[1].tstamp_matrix
             gp2_stamps = GR[2].tstamp_matrix
-            if  gp1_stamps:
-                ep, jep = Trenc.construct_gps(GR_matrix)
+            if not gp1_stamps:
+                temp_eps, temp_jeps = Trenc.construct_gps(GR_matrix)
+                for ep in temp_eps:
+                    eps.append(ep)
+                for jep in temp_jeps:
+                    jeps.append(jep)
             else:
                 # eps, jeps = Trenc.construct_tgps1(GR_matrix, gp1_stamps, gp2_stamps)
                 if not tgp1:
@@ -216,11 +219,18 @@ class Trenc:
                 if tgp1:
                     tgp1, tgp2 = Trenc.construct_tgps(GR_matrix, gp2_stamps, ep=tgp1)
         if tgp1:
-            eps, jeps = Trenc.fetch_eps(tgp1)
-        elif gp:
-            eps, jeps = Trenc.fetch_eps(gp)
-        else:
-            return False, False
+            temp_eps, temp_jeps = Trenc.fetch_eps(tgp1)
+            for ep in temp_eps:
+                eps.append(ep)
+            for jep in temp_jeps:
+                jeps.append(jep)
+        # elif gp:
+        #    eps, jeps = Trenc.fetch_eps(gp)
+        # else:
+        #    return False, False
+        for ep in jeps:
+            print(ep.pattern_info)
+            print('end')
         return eps, jeps
 
     @staticmethod
@@ -254,8 +264,8 @@ class Trenc:
 
     @staticmethod
     def construct_gps(GR_matrix):
-        ep = list()
-        jep = list()
+        eps = list()
+        jeps = list()
         size = len(GR_matrix)
 
         # 1. normalize GR_matrix (pick largest GR for every attribute)
@@ -272,10 +282,7 @@ class Trenc:
             row_i = GR_matrix[i]
             incr = row_i[0]
             decr = row_i[1]
-            # if incr == -1:
-            #    temp = tuple([attr, '+'])
-            #    jep.append(temp)
-            # elif incr > 1:
+
             if incr > 1 or incr == -1:
                 pat = [[tuple([attr, '+'])], incr]
                 for j in range(i+1, size, 1):
@@ -283,28 +290,26 @@ class Trenc:
                     pat = Trenc.combine_patterns(pat, row_j, j)
                 if len(pat[0]) > 1:
                     if pat[1] == -1:
-                        jep.append(pat)
+                        jep = JEP(pat[0])
+                        jeps.append(jep)
                     else:
-                        ep.append(pat)
-            # if decr == -1:
-            #    temp = tuple([attr, '-'])
-            #    jep.append(temp)
-            # elif decr > 1:
+                        ep = EP(pat[0], pat[1])
+                        eps.append(ep)
+
             if decr > 1 or decr == -1:
                 pat = [[tuple([attr, '-'])], decr]
                 for j in range(i+1, size, 1):
                     row_j = GR_matrix[j]
                     pat = Trenc.combine_patterns(pat, row_j, j)
-                # print(str(pat) + ' = ' + str(len(pat[0])))
-                # print('inner end')
                 if len(pat[0]) > 1:
                     if pat[1] == -1:
-                        jep.append(pat)
+                        jep = JEP(pat[0])
+                        jeps.append(jep)
                     else:
-                        ep.append(pat)
-        print([ep, jep])
-        # print('outer end')
-        return ep, jep
+                        ep = EP(pat[0], pat[1])
+                        eps.append(ep)
+        # print([ep, jep])
+        return eps, jeps
 
     @staticmethod
     def construct_tgps(GR_matrix, gp_tstamps, ep=None):
