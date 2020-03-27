@@ -82,8 +82,8 @@ class Trenc:
         else:
             gp_list = self.fetch_patterns()
             self.GR_list = Trenc.gen_GR_matrix(set_id, gp_list)
-            Trenc.construct_eps(self.GR_list)
-            # return self.GR_list
+            eps, jeps = Trenc.construct_eps(self.GR_list)
+            return eps, jeps
 
     def fetch_patterns(self):
         if self.allow_parallel:
@@ -201,7 +201,7 @@ class Trenc:
     def construct_eps(GR_list):
         eps = list()
         jeps = list()
-        tgp1 = False
+        raw_ep1 = False
         for GR in GR_list:
             GR_matrix = GR[0]
             gp1_stamps = GR[1].tstamp_matrix
@@ -214,23 +214,16 @@ class Trenc:
                     jeps.append(jep)
             else:
                 # eps, jeps = Trenc.construct_tgps1(GR_matrix, gp1_stamps, gp2_stamps)
-                if not tgp1:
-                    ok, tgp1 = Trenc.construct_tgps(GR_matrix, gp1_stamps)
-                if tgp1:
-                    tgp1, tgp2 = Trenc.construct_tgps(GR_matrix, gp2_stamps, ep=tgp1)
-        if tgp1:
-            temp_eps, temp_jeps = Trenc.fetch_eps(tgp1)
+                if not raw_ep1:
+                    ok, raw_ep1 = Trenc.construct_tgps(GR_matrix, gp1_stamps)
+                if raw_ep1:
+                    raw_ep1, raw_ep2 = Trenc.construct_tgps(GR_matrix, gp2_stamps, ep=raw_ep1)
+        if raw_ep1:
+            temp_eps, temp_jeps = Trenc.fetch_eps(raw_ep1)
             for ep in temp_eps:
                 eps.append(ep)
             for jep in temp_jeps:
                 jeps.append(jep)
-
-        for ep in eps:
-            print(ep.pattern_info)
-            print('end')
-        for jep in jeps:
-            print(jep.pattern_info)
-            print('end')
         return eps, jeps
 
     @staticmethod
