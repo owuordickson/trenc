@@ -207,8 +207,8 @@ class Trenc:
             GR_matrix = GR[0]
             gp1_stamps = GR[1].tstamp_matrix
             gp2_stamps = GR[2].tstamp_matrix
-            if not gp1_stamps:
-                gp = Trenc.construct_gps(GR_matrix)
+            if  gp1_stamps:
+                ep, jep = Trenc.construct_gps(GR_matrix)
             else:
                 # eps, jeps = Trenc.construct_tgps1(GR_matrix, gp1_stamps, gp2_stamps)
                 if not tgp1:
@@ -272,25 +272,38 @@ class Trenc:
             row_i = GR_matrix[i]
             incr = row_i[0]
             decr = row_i[1]
-            if incr == -1:
-                temp = tuple([attr, '+'])
-                jep.append(temp)
-            elif incr > 1:
+            # if incr == -1:
+            #    temp = tuple([attr, '+'])
+            #    jep.append(temp)
+            # elif incr > 1:
+            if incr > 1 or incr == -1:
                 pat = [[tuple([attr, '+'])], incr]
                 for j in range(i+1, size, 1):
                     row_j = GR_matrix[j]
                     pat = Trenc.combine_patterns(pat, row_j, j)
-                ep.append(pat)
-            if decr == -1:
-                temp = tuple([attr, '-'])
-                jep.append(temp)
-            elif decr > 1:
+                if len(pat[0]) > 1:
+                    if pat[1] == -1:
+                        jep.append(pat)
+                    else:
+                        ep.append(pat)
+            # if decr == -1:
+            #    temp = tuple([attr, '-'])
+            #    jep.append(temp)
+            # elif decr > 1:
+            if decr > 1 or decr == -1:
                 pat = [[tuple([attr, '-'])], decr]
                 for j in range(i+1, size, 1):
                     row_j = GR_matrix[j]
                     pat = Trenc.combine_patterns(pat, row_j, j)
-                ep.append(pat)
+                # print(str(pat) + ' = ' + str(len(pat[0])))
+                # print('inner end')
+                if len(pat[0]) > 1:
+                    if pat[1] == -1:
+                        jep.append(pat)
+                    else:
+                        ep.append(pat)
         print([ep, jep])
+        # print('outer end')
         return ep, jep
 
     @staticmethod
@@ -330,7 +343,7 @@ class Trenc:
         else:
             return []
 
-        if dir_ > 0:
+        if dir_ > 0 or dir_ == -1:
             temp = tuple([attr, sign])
             pat[0].append(temp)
             if dir_ < pat[1]:
