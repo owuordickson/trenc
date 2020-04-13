@@ -22,7 +22,7 @@ class DataTransform:
         cols, data = DataTransform.test_dataset(filename)
 
         if cols:
-            print("Dataset Ok")
+            # print("Dataset Ok")
             self.time_ok = True
             self.time_cols = cols
             self.ref_item = ref_item
@@ -30,7 +30,7 @@ class DataTransform:
             self.max_step = self.get_max_step(min_rep)
             self.multi_data = self.split_dataset()
         else:
-            print("Dataset Error")
+            # print("Dataset Error")
             self.time_ok = False
             self.time_cols = []
             raise Exception('No date-time data found')

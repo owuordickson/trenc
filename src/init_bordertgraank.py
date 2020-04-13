@@ -52,7 +52,15 @@ def algorithm_ep_init(filename, ref_item, minsup, minrep):
             wr_line += "Oops! no frequent patterns were found\n"
             # wr_line += "-------------------------------------"
         else:
-            wr_line += "Total Data Transformations: " + str(dataset.max_step) + " | " + "Minimum Support: " + str(min_sup) + '\n\n'
+            wr_line = "Algorithm: Border-TGRAANK \n"
+            #wr_line += "No. of (dataset) attributes: " + str(len(ep_set.titles)) + '\n'
+            # wr_line += "No. of (dataset) tuples: " + str(d_set.size) + '\n'
+            wr_line += "Minimum support: " + str(min_sup) + '\n'
+            # wr_line += "Minimum representativity: " + str(minRep) + '\n'
+            #wr_line += "Multi-core execution: " + str(ep_set.msg_para) + '\n'
+            #wr_line += "Number of cores: " + str(ep_set.cores) + '\n'
+            # wr_line += "Number of tasks: " + str(tgp.max_step) + '\n'
+            wr_line += "Total Data Transformations: " + str(dataset.max_step) + '\n\n'
             # wr_line += "----------------------------------------------------"
             for line in title:
                 wr_line += line + '\n'
