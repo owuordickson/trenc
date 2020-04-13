@@ -30,16 +30,18 @@ class Trenc:
         self.titles = []
         self.GR_list = []
 
+        if cores > 1:
+            self.cores = cores
+        else:
+            self.cores = InitParallel.get_num_cores()
+
         if allow_para == 0:
             self.allow_parallel = False
             self.msg_para = "False"
         else:
             self.allow_parallel = True
             self.msg_para = "True"
-            if cores > 1:
-                self.cores = cores
-            else:
-                self.cores = InitParallel.get_num_cores()
+
         self.d_sets = self.get_csv_data()
         if (len(self.d_sets) <= 1) and self.min_rep is None:
             raise Exception("min_representativity and/or reference column required")
