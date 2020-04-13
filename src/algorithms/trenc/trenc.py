@@ -32,8 +32,10 @@ class Trenc:
 
         if allow_para == 0:
             self.allow_parallel = False
+            self.msg_para = "False"
         else:
             self.allow_parallel = True
+            self.msg_para = "True"
             if cores > 1:
                 self.cores = cores
             else:

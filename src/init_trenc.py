@@ -5,26 +5,19 @@ from src.algorithms.trenc.trenc import Trenc
 from src.algorithms.trenc.handle_data import HandleData
 
 
-def init_trenc(paths, min_sup, ref_item, cores, allow_para, min_rep):
+def init_trenc(paths, minSup, ref_item, cores, allow_para, minRep):
     try:
         wr_line = ""
         # ep_set = Trenc(paths, 0.5)
-        ep_set = Trenc(paths, min_sup, cores, allow_para, min_rep, ref_item)
-
-        if allow_para >= 1:
-            msg_para = "True"
-            # list_tgp = tgp.run_tgraank(parallel=True)
-        else:
-            msg_para = "False"
-            # list_tgp = tgp.run_tgraank()
+        ep_set = Trenc(paths, minSup, cores, allow_para, minRep, ref_item)
         ep_list, jep_list = ep_set.run_trenc(0)
 
         wr_line = "Algorithm: TRENC \n"
-        #wr_line += "No. of (dataset) attributes: " + str(d_set.column_size) + '\n'
+        wr_line += "No. of (dataset) attributes: " + str(len(ep_set.titles)) + '\n'
         #wr_line += "No. of (dataset) tuples: " + str(d_set.size) + '\n'
-        wr_line += "Minimum support: " + str(min_sup) + '\n'
-        wr_line += "Minimum representativity: " + str(min_rep) + '\n'
-        wr_line += "Multi-core execution: " + str(msg_para) + '\n'
+        wr_line += "Minimum support: " + str(minSup) + '\n'
+        #wr_line += "Minimum representativity: " + str(minRep) + '\n'
+        wr_line += "Multi-core execution: " + str(ep_set.msg_para) + '\n'
         wr_line += "Number of cores: " + str(ep_set.cores) + '\n'
         #wr_line += "Number of tasks: " + str(tgp.max_step) + '\n'
         wr_line += '\n\n'
