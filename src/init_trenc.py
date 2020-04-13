@@ -111,11 +111,11 @@ if __name__ == "__main__":
         min_sup = options.minSup
         min_rep = options.minRep
         allow_p = options.allowPara
-        numCores = options.numCores
+        num_cores = options.numCores
 
     import time
     start = time.time()
-    res_text = init_trenc(file_path, min_sup, ref_col, numCores, allow_p, min_rep)
+    res_text = init_trenc(file_path, min_sup, ref_col, num_cores, allow_p, min_rep)
     end = time.time()
 
     wr_text = ("Run-time: " + str(end - start) + " seconds\n")

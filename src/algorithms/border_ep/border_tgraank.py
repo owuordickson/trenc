@@ -23,6 +23,7 @@ import gc
 # from optparse import OptionParser
 from src.algorithms.border_ep.fuzzy_temporal import init_fuzzy_support
 from src.algorithms.border_ep.data_transform import DataTransform
+from src.algorithms.border_ep.border_diff import gen_set
 # from src.algorithms.border_ep.mbdll_border import *
 
 

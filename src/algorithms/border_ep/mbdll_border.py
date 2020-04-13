@@ -10,7 +10,7 @@ This algorithm implements and modifies the design of Dong and Li, 1999
 
 """
 
-from border_diff import *
+from src.algorithms.border_ep.border_diff import *
 
 
 def mbdll_border(dataset_1, dataset_2):

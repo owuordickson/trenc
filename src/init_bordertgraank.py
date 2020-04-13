@@ -49,14 +49,14 @@ def algorithm_ep_init(filename, ref_item, minsup, minrep):
                     maximal_items = get_maximal_items(gp_list, tlag_list)
                     fgp_list.append(tuple((title, maximal_items)))
         if not fgp_list:
-            wr_line += "Oops! no frequent patterns were found"
-            wr_line += "-------------------------------------"
+            wr_line += "Oops! no frequent patterns were found\n"
+            # wr_line += "-------------------------------------"
         else:
-            wr_line += "Total Data Transformations: " + str(dataset.max_step) + " | " + "Minimum Support: " + str(min_sup)
-            wr_line += "----------------------------------------------------"
+            wr_line += "Total Data Transformations: " + str(dataset.max_step) + " | " + "Minimum Support: " + str(min_sup) + '\n\n'
+            # wr_line += "----------------------------------------------------"
             for line in title:
-                wr_line += line
-            wr_line += 'Emerging Pattern | Time Lags: (Transformation n, Transformation m)'
+                wr_line += line + '\n'
+            wr_line += 'Emerging Pattern | Time Lags: (Transformation n, Transformation m)\n\n'
 
             all_fgps = list()
             for item_list in fgp_list:
@@ -76,13 +76,13 @@ def algorithm_ep_init(filename, ref_item, minsup, minrep):
                             patterns = patterns + 1
                             temp = tuple((ep, tlags))
                             ep_list.append(temp)
-                            wr_line += str(temp[0]) + " | " + str(temp[1])
+                            wr_line += str(temp[0]) + " | " + str(temp[1]) + '\n'
 
-            wr_line += "\nTotal: " + str(patterns) + " FtGEPs found!"
-            wr_line += "---------------------------------------------------------"
+            wr_line += "\nTotal: " + str(patterns) + " FtGEPs found!\n"
+            # wr_line += "---------------------------------------------------------"
             if patterns == 0:
-                wr_line += "Oops! no relevant emerging pattern was found"
-                wr_line += "---------------------------------------------------------"
+                wr_line += "Oops! no relevant emerging pattern was found\n\n"
+                # wr_line += "---------------------------------------------------------"
         return wr_line
     except Exception as error:
         wr_line = "Failed: " + str(error)
@@ -119,7 +119,7 @@ if __name__ == "__main__":
         optparser.add_option('-s', '--minSupport',
                              dest='minSup',
                              help='minimum support value',
-                             default=0.7,
+                             default=0.5,
                              type='float')
         optparser.add_option('-r', '--minRepresentativity',
                              dest='minRep',

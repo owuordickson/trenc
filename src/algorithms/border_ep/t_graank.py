@@ -20,8 +20,8 @@ import sys
 import numpy as np
 import gc
 from optparse import OptionParser
-from fuzzy_temporal import init_fuzzy_support
-from data_transform import DataTransform
+from src.algorithms.border_ep.fuzzy_temporal import init_fuzzy_support
+from src.algorithms.border_ep.data_transform import DataTransform
 
 
 def trad(dataset):
