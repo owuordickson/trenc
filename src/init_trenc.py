@@ -116,7 +116,6 @@ if __name__ == "__main__":
     import time
     start = time.time()
     res_text = init_trenc(file_path, min_sup, ref_col, numCores, allow_p, min_rep)
-    # res_text = init_trenc('../data/DATASET.csv')  # init_algorithm(file_path, ref_col, min_sup, min_rep, allow_p)
     end = time.time()
 
     wr_text = ("Run-time: " + str(end - start) + " seconds\n")
