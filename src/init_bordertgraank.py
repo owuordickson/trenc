@@ -25,6 +25,7 @@ from src.algorithms.border_ep.border_tgraank import *
 
 def algorithm_ep_init(filename, ref_item, minsup, minrep):
     try:
+        wr_line = ''
         fgp_list = list()  # fuzzy-temporal gradual patterns
 
         # 1. Load dataset into program
@@ -48,14 +49,14 @@ def algorithm_ep_init(filename, ref_item, minsup, minrep):
                     maximal_items = get_maximal_items(gp_list, tlag_list)
                     fgp_list.append(tuple((title, maximal_items)))
         if not fgp_list:
-            print("Oops! no frequent patterns were found")
-            print("----------------------------------------------------------------")
+            wr_line += "Oops! no frequent patterns were found"
+            wr_line += "-------------------------------------"
         else:
-            print("Total Data Transformations: " + str(dataset.max_step) + " | " + "Minimum Support: " + str(min_sup))
-            print("----------------------------------------------------------------")
+            wr_line += "Total Data Transformations: " + str(dataset.max_step) + " | " + "Minimum Support: " + str(min_sup)
+            wr_line += "----------------------------------------------------"
             for line in title:
-                print(line)
-            print('Emerging Pattern | Time Lags: (Transformation n, Transformation m)')
+                wr_line += line
+            wr_line += 'Emerging Pattern | Time Lags: (Transformation n, Transformation m)'
 
             all_fgps = list()
             for item_list in fgp_list:
@@ -75,15 +76,18 @@ def algorithm_ep_init(filename, ref_item, minsup, minrep):
                             patterns = patterns + 1
                             temp = tuple((ep, tlags))
                             ep_list.append(temp)
-                            print(str(temp[0]) + " | " + str(temp[1]))
+                            wr_line += str(temp[0]) + " | " + str(temp[1])
 
-            print("\nTotal: " + str(patterns) + " FtGEPs found!")
-            print("---------------------------------------------------------")
+            wr_line += "\nTotal: " + str(patterns) + " FtGEPs found!"
+            wr_line += "---------------------------------------------------------"
             if patterns == 0:
-                print("Oops! no relevant emerging pattern was found")
-                print("---------------------------------------------------------")
+                wr_line += "Oops! no relevant emerging pattern was found"
+                wr_line += "---------------------------------------------------------"
+        return wr_line
     except Exception as error:
+        wr_line = "Failed: " + str(error)
         print(error)
+        return wr_line
 
 
 if __name__ == "__main__":
@@ -104,7 +108,8 @@ if __name__ == "__main__":
         optparser.add_option('-f', '--inputFile',
                              dest='file',
                              help='path to file containing csv',
-                             default=None,
+                             # default=None,
+                             default='../data/DATASET.csv',
                              type='string')
         optparser.add_option('-c', '--refColumn',
                              dest='refCol',
@@ -126,14 +131,9 @@ if __name__ == "__main__":
 
         inFile = None
         if options.file is None:
-            #inFile = 'DATASET.csv'
-            #inFile = '../misc/data/rain_temp1991-2015.csv'
-            #inFile = '../misc/data/ICU_household_power_consumption1.csv'
-            inFile = '../misc/data/ICU_household_power_consumption2.csv'
-            #inFile = '../misc/data/ICU_household_power_consumption.csv'
-
-            #print("Usage: $python t_graank.py -f filename.csv -c refColumn -s minSup  -r minRep")
-            #sys.exit('System will exit')
+            print('No data-set filename specified, system with exit')
+            print("Usage: $python init_bordertgraank.py -f filename.csv -c refColumn -s minSup  -r minRep")
+            sys.exit('System will exit')
         else:
             inFile = options.file
 
@@ -147,4 +147,15 @@ if __name__ == "__main__":
     # if pattern_type == 1:
     #    algorithm_init(file_name, ref_col, min_sup, min_rep)
     # else:
-    algorithm_ep_init(file_name, ref_col, min_sup, min_rep)
+    import time
+
+    start = time.time()
+    # res_text = init_trenc(file_path, min_sup, ref_col, numCores, allow_p, min_rep)
+    res_text = algorithm_ep_init(file_name, ref_col, min_sup, min_rep)
+    end = time.time()
+
+    wr_text = ("Run-time: " + str(end - start) + " seconds\n")
+    wr_text += str(res_text)
+    f_name = str('res_border' + str(end).replace('.', '', 1) + '.txt')
+    # HandleData.write_file(wr_text, f_name)
+    print(wr_text)
