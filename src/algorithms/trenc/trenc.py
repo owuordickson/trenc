@@ -66,13 +66,19 @@ class Trenc:
             num_cores = self.cores
             pool = mp.Pool(num_cores)
             d_sets = pool.map(self.fetch_transform_data, steps)
-            return d_sets
+            if len(d_sets) > 0:
+                return d_sets
+            else:
+                raise Exception("No transformed data set, reduce min_rep")
         else:
             d_sets = list()
             for step in range(self.tg_set.max_step):
                 d_set = self.fetch_transform_data(step)
                 d_sets.append(d_set)
-            return d_sets
+            if len(d_sets) > 0:
+                return d_sets
+            else:
+                raise Exception("No transformed data set, reduce min_rep")
 
     def run_trenc(self, set_id=0):
         # test titles
