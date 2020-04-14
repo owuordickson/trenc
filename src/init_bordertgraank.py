@@ -23,7 +23,7 @@ from src.algorithms.border_ep.mbdll_border import *
 from src.algorithms.border_ep.border_tgraank import *
 
 
-def algorithm_ep_init(filename, ref_item, minsup, minrep):
+def algorithm_ep_init(filename, ref_item, minsup, minrep, cores):
     try:
         wr_line = ''
         fgp_list = list()  # fuzzy-temporal gradual patterns
@@ -53,15 +53,14 @@ def algorithm_ep_init(filename, ref_item, minsup, minrep):
             # wr_line += "-------------------------------------"
         else:
             wr_line = "Algorithm: Border-TGRAANK \n"
-            #wr_line += "No. of (dataset) attributes: " + str(len(ep_set.titles)) + '\n'
-            # wr_line += "No. of (dataset) tuples: " + str(d_set.size) + '\n'
-            wr_line += "Minimum support: " + str(min_sup) + '\n'
-            # wr_line += "Minimum representativity: " + str(minRep) + '\n'
-            #wr_line += "Multi-core execution: " + str(ep_set.msg_para) + '\n'
-            #wr_line += "Number of cores: " + str(ep_set.cores) + '\n'
-            # wr_line += "Number of tasks: " + str(tgp.max_step) + '\n'
-            wr_line += "Total Data Transformations: " + str(dataset.max_step) + '\n\n'
-            # wr_line += "----------------------------------------------------"
+            wr_line += "No. of data sets: " + str(dataset.max_step) + '\n'
+            wr_line += "No. of (dataset) attributes: " + str(len(dataset.data[0])) + '\n'
+            wr_line += "Minimum support: " + str(minsup) + '\n'
+            wr_line += "Minimum representativity: " + str(minrep) + '\n'
+            # wr_line += "Multi-core execution: " + str(ep_set.msg_para) + '\n'
+            wr_line += "Number of cores: " + str(cores) + '\n'
+            wr_line += '\n\n'
+
             for line in title:
                 wr_line += line + '\n'
             wr_line += 'Emerging Pattern | Time Lags: (Transformation n, Transformation m)\n\n'
@@ -134,7 +133,11 @@ if __name__ == "__main__":
                              help='minimum representativity',
                              default=0.5,
                              type='float')
-
+        optparser.add_option('-m', '--cores',
+                             dest='numCores',
+                             help='number of cores',
+                             default=4,
+                             type='int')
         (options, args) = optparser.parse_args()
 
         inFile = None
@@ -150,6 +153,7 @@ if __name__ == "__main__":
         ref_col = options.refCol
         min_sup = options.minSup
         min_rep = options.minRep
+        num_cores = options.numCores
 
     # import timeit
     # if pattern_type == 1:
@@ -159,7 +163,7 @@ if __name__ == "__main__":
 
     start = time.time()
     # res_text = init_trenc(file_path, min_sup, ref_col, numCores, allow_p, min_rep)
-    res_text = algorithm_ep_init(file_name, ref_col, min_sup, min_rep)
+    res_text = algorithm_ep_init(file_name, ref_col, min_sup, min_rep, num_cores)
     end = time.time()
 
     wr_text = ("Run-time: " + str(end - start) + " seconds\n")

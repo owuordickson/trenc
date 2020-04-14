@@ -13,13 +13,12 @@ def init_trenc(paths, minSup, ref_item, cores, allow_para, minRep):
         ep_list, jep_list = ep_set.run_trenc(0)
 
         wr_line = "Algorithm: TRENC \n"
-        wr_line += "No. of (dataset) attributes: " + str(len(ep_set.titles)) + '\n'
-        #wr_line += "No. of (dataset) tuples: " + str(d_set.size) + '\n'
+        wr_line += "No. of data sets: " + str(len(ep_set.d_sets)) + '\n'
+        wr_line += "No. of (data set) attributes: " + str(len(ep_set.titles)) + '\n'
         wr_line += "Minimum support: " + str(minSup) + '\n'
         wr_line += "Minimum representativity: " + str(minRep) + '\n'
         wr_line += "Multi-core execution: " + str(ep_set.msg_para) + '\n'
         wr_line += "Number of cores: " + str(ep_set.cores) + '\n'
-        #wr_line += "Number of tasks: " + str(tgp.max_step) + '\n'
         wr_line += '\n\n'
 
         titles = ep_set.titles
