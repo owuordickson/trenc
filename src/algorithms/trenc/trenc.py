@@ -43,13 +43,14 @@ class Trenc:
             self.msg_para = "True"
 
         self.d_sets = self.get_csv_data()
-        if (len(self.d_sets) <= 1) and self.min_rep is None:
-            raise Exception("min_representativity and/or reference column required")
-        elif (len(self.d_sets) <= 1) and (self.min_rep is not None):
-            d_set = self.d_sets[0]
-            self.tg_set = TgradACO(d_set, self.ref_item,
+        if len(self.d_sets) <= 1:
+            if self.min_rep is None:
+                raise Exception("min_representativity and/or reference column required")
+            elif self.min_rep is not None:
+                d_set = self.d_sets[0]
+                self.tg_set = TgradACO(d_set, self.ref_item,
                                    self.min_sup, self.min_rep, 0)
-            self.d_sets = self.get_transform_data()
+                self.d_sets = self.get_transform_data()
 
     def get_csv_data(self):
         if self.allow_parallel:
