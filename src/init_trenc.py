@@ -36,7 +36,7 @@ def init_trenc(paths, minSup, ref_item, cores, allow_para, minRep):
         wr_line += str("\nFile: " + paths + '\n')
         wr_line += str("Patterns" + '\n\n')
 
-        if len(ep_list) < 1 and jep_list < 1:
+        if len(ep_list) < 1 and len(jep_list) < 1:
             wr_line += 'No emerging patterns found\n'
         else:
             for ep in ep_list:
