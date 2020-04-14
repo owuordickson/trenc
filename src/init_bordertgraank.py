@@ -21,6 +21,7 @@ import sys
 from optparse import OptionParser
 from src.algorithms.border_ep.mbdll_border import *
 from src.algorithms.border_ep.border_tgraank import *
+from src.algorithms.trenc.handle_data import HandleData
 
 
 def algorithm_ep_init(filename, ref_item, minsup, minrep, cores):
@@ -169,5 +170,5 @@ if __name__ == "__main__":
     wr_text = ("Run-time: " + str(end - start) + " seconds\n")
     wr_text += str(res_text)
     f_name = str('res_border' + str(end).replace('.', '', 1) + '.txt')
-    # HandleData.write_file(wr_text, f_name)
-    print(wr_text)
+    HandleData.write_file(wr_text, f_name)
+    # print(wr_text)
