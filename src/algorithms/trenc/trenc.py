@@ -44,6 +44,7 @@ class Trenc:
 
         self.d_sets = self.get_csv_data()
         if len(self.d_sets) <= 1:
+            # if we are mining TGPs
             if self.min_rep is None:
                 raise Exception("min_representativity and/or reference column required")
             elif self.min_rep is not None:
