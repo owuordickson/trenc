@@ -9,16 +9,19 @@ def init_trenc(paths, minSup, ref_item, cores, allow_para, minRep):
     try:
         wr_line = ""
         # ep_set = Trenc(paths, 0.5)
-        ep_set = Trenc(paths, minSup, cores, allow_para, minRep, ref_item)
+        if minRep == 0:
+            ep_set = Trenc(paths, minSup, cores, allow_para, None, None)
+        else:
+            ep_set = Trenc(paths, minSup, cores, allow_para, minRep, ref_item)
         ep_list, jep_list = ep_set.run_trenc(0)
 
         wr_line = "Algorithm: TRENC \n"
         wr_line += "No. of data sets: " + str(len(ep_set.d_sets)) + '\n'
         wr_line += "No. of (data set) attributes: " + str(len(ep_set.titles)) + '\n'
-        if ep_set.temporal:
-            wr_line += "Size of 1st data set: " + str(ep_set.d_sets[0][0].size) + '\n'
-        else:
+        if ep_set.min_rep is None:
             wr_line += "Size of 1st data set: " + str(ep_set.d_sets[0].size) + '\n'
+        else:
+            wr_line += "Size of 1st data set: " + str(ep_set.d_sets[0][0].size) + '\n'
         wr_line += "Minimum support: " + str(minSup) + '\n'
         wr_line += "Minimum representativity: " + str(minRep) + '\n'
         wr_line += "Multi-core execution: " + str(ep_set.msg_para) + '\n'

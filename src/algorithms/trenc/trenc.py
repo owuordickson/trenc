@@ -23,7 +23,6 @@ from src.algorithms.trenc.ep import EP, JEP
 class Trenc:
 
     def __init__(self, f_paths, min_sup, cores=0, allow_para=1, min_rep=None, ref_item=None):
-        self.temporal = False
         self.file_paths = Trenc.test_paths(f_paths)
         self.ref_item = ref_item
         self.min_rep = min_rep
@@ -52,7 +51,6 @@ class Trenc:
                 d_set = self.d_sets[0]
                 self.tg_set = TgradACO(d_set, self.ref_item, self.min_sup, self.min_rep, 0)
                 self.d_sets = self.get_transform_data()
-                self.temporal = True
 
     def get_csv_data(self):
         if self.allow_parallel:
@@ -214,7 +212,7 @@ class Trenc:
     def construct_eps(GR_list):
         eps = list()
         jeps = list()
-        raw_ep1 = False
+        raw_ep1 = None
         for GR in GR_list:
             GR_matrix = GR[0]
             gp1_stamps = GR[1].tstamp_matrix
@@ -227,11 +225,11 @@ class Trenc:
                     jeps.append(jep)
             else:
                 # eps, jeps = Trenc.construct_tgps1(GR_matrix, gp1_stamps, gp2_stamps)
-                if not raw_ep1:
+                if raw_ep1 is None:
                     ok, raw_ep1 = Trenc.construct_tgps(GR_matrix, gp1_stamps)
-                if raw_ep1:
+                if raw_ep1 is not None:
                     raw_ep1, raw_ep2 = Trenc.construct_tgps(GR_matrix, gp2_stamps, ep=raw_ep1)
-        if raw_ep1:
+        if raw_ep1 is not None:
             temp_eps, temp_jeps = Trenc.fetch_eps(raw_ep1)
             for ep in temp_eps:
                 eps.append(ep)
