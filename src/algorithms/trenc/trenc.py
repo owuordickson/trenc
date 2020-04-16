@@ -23,6 +23,7 @@ from src.algorithms.trenc.ep import EP, JEP
 class Trenc:
 
     def __init__(self, f_paths, min_sup, cores=0, allow_para=1, min_rep=None, ref_item=None):
+        self.temporal = False
         self.file_paths = Trenc.test_paths(f_paths)
         self.ref_item = ref_item
         self.min_rep = min_rep
@@ -49,9 +50,9 @@ class Trenc:
                 raise Exception("min_representativity and/or reference column required")
             elif self.min_rep is not None:
                 d_set = self.d_sets[0]
-                self.tg_set = TgradACO(d_set, self.ref_item,
-                                   self.min_sup, self.min_rep, 0)
+                self.tg_set = TgradACO(d_set, self.ref_item, self.min_sup, self.min_rep, 0)
                 self.d_sets = self.get_transform_data()
+                self.temporal = True
 
     def get_csv_data(self):
         if self.allow_parallel:
