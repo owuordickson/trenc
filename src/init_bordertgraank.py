@@ -5,6 +5,7 @@
 @version: "2.0"
 @email: "owuordickson@gmail.com"
 @created: "19 November 2019"
+@modified: "13 May 2020"
 
 Usage:
     $python init_bordertgraank.py -t pType -f fileName.csv -c refCol -s minSup  -r minRep
@@ -22,33 +23,21 @@ from optparse import OptionParser
 from src.algorithms.border_ep.mbdll_border import *
 from src.algorithms.border_ep.border_tgraank import *
 from src.algorithms.trenc.handle_data import HandleData
+from src.algorithms.border_ep.t_graank import Tgraank
 
 
-def algorithm_ep_init(filename, ref_item, minsup, minrep, cores):
+def algorithm_ep_init(filename, ref_item, minsup, minrep, cores, allow_para):
     try:
         wr_line = ''
         fgp_list = list()  # fuzzy-temporal gradual patterns
 
         # 1. Load dataset into program
         dataset = DataTransform(filename, ref_item, minrep)
-
+        tgp = Tgraank(dataset, minsup, ref_item, cores, allow_para)
         # 2. TRANSFORM DATA (for each step)
-        for s in range(dataset.max_step):
-            step = s+1  # because for-loop is not inclusive from range: 0 - max_step
-            # 3. Calculate representativity
-            chk_rep, rep_info = dataset.get_representativity(step)
+        # for s in range(dataset.max_step):
+        fgp_list = tgp.extract_tgps()
 
-            if chk_rep:
-                # 4. Transform data
-                data, time_diffs = dataset.transform_data(step)
-
-                # 5. Execute GRAANK for each transformation
-                title, gp_list, sup_list, tlag_list = graank(trad(list(data)), minsup, time_diffs, eq=False)
-
-                pattern_found = check_for_pattern(ref_item, gp_list)
-                if pattern_found:
-                    maximal_items = get_maximal_items(gp_list, tlag_list)
-                    fgp_list.append(tuple((title, maximal_items)))
         if not fgp_list:
             wr_line += "Oops! no frequent patterns were found\n"
             # wr_line += "-------------------------------------"
@@ -58,18 +47,21 @@ def algorithm_ep_init(filename, ref_item, minsup, minrep, cores):
             wr_line += "No. of (dataset) attributes: " + str(len(dataset.data[0])) + '\n'
             wr_line += "Minimum support: " + str(minsup) + '\n'
             wr_line += "Minimum representativity: " + str(minrep) + '\n'
-            # wr_line += "Multi-core execution: " + str(ep_set.msg_para) + '\n'
+            wr_line += "Multi-core execution: " + str(tgp.msg_parallel) + '\n'
             wr_line += "Number of cores: " + str(cores) + '\n'
             wr_line += '\n\n'
 
-            for line in title:
+            for line in tgp.title:
                 wr_line += line + '\n'
             wr_line += 'Emerging Pattern | Time Lags: (Transformation n, Transformation m)\n\n'
 
             all_fgps = list()
             for item_list in fgp_list:
-                for item in item_list[1]:
-                    all_fgps.append(item)
+                if len(item_list) > 0:
+                    for item in item_list[1]:
+                        all_fgps.append(item)
+                else:
+                    continue
 
             patterns = 0
             ep_list = list()
@@ -92,7 +84,7 @@ def algorithm_ep_init(filename, ref_item, minsup, minrep, cores):
                 wr_line += "Oops! no relevant emerging pattern was found\n\n"
                 # wr_line += "---------------------------------------------------------"
         return wr_line
-    except Exception as error:
+    except ArithmeticError as error:
         wr_line = "Failed: " + str(error)
         print(error)
         return wr_line
@@ -106,6 +98,7 @@ if __name__ == "__main__":
         ref_col = sys.argv[3]
         min_sup = sys.argv[4]
         min_rep = sys.argv[5]
+        num_cores = 1
     else:
         optparser = OptionParser()
         optparser.add_option('-t', '--patternType',
@@ -134,6 +127,11 @@ if __name__ == "__main__":
                              help='minimum representativity',
                              default=0.5,
                              type='float')
+        optparser.add_option('-p', '--allowMultiprocessing',
+                             dest='allowPara',
+                             help='allow multiprocessing',
+                             default=1,
+                             type='int')
         optparser.add_option('-m', '--cores',
                              dest='numCores',
                              help='number of cores',
@@ -154,6 +152,7 @@ if __name__ == "__main__":
         ref_col = options.refCol
         min_sup = options.minSup
         min_rep = options.minRep
+        allow_p = options.allowPara
         num_cores = options.numCores
 
     # import timeit
@@ -164,11 +163,11 @@ if __name__ == "__main__":
 
     start = time.time()
     # res_text = init_trenc(file_path, min_sup, ref_col, numCores, allow_p, min_rep)
-    res_text = algorithm_ep_init(file_name, ref_col, min_sup, min_rep, num_cores)
+    res_text = algorithm_ep_init(file_name, ref_col, min_sup, min_rep, num_cores, allow_p)
     end = time.time()
 
     wr_text = ("Run-time: " + str(end - start) + " seconds\n")
     wr_text += str(res_text)
     f_name = str('res_border' + str(end).replace('.', '', 1) + '.txt')
-    # HandleData.write_file(wr_text, f_name)
+    HandleData.write_file(wr_text, f_name)
     print(wr_text)

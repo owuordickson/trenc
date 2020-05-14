@@ -7,7 +7,7 @@ from src.algorithms.trenc.handle_data import HandleData
 
 def init_trenc(paths, minSup, ref_item, cores, allow_para, minRep):
     try:
-        wr_line = ""
+        # wr_line = ""
         # ep_set = Trenc(paths, 0.5)
         if minRep == 0:
             ep_set = Trenc(paths, minSup, cores, allow_para, None, None)
@@ -71,6 +71,7 @@ if __name__ == "__main__":
         min_sup = sys.argv[3]
         min_rep = sys.argv[4]
         allow_p = sys.argv[5]
+        num_cores = 1
     else:
         optparser = OptionParser()
         optparser.add_option('-f', '--inputFile',
@@ -82,7 +83,7 @@ if __name__ == "__main__":
         optparser.add_option('-c', '--refColumn',
                              dest='refCol',
                              help='reference column',
-                             default=2,
+                             default=1,
                              type='int')
         optparser.add_option('-s', '--minSupport',
                              dest='minSup',
@@ -97,7 +98,7 @@ if __name__ == "__main__":
         optparser.add_option('-p', '--allowMultiprocessing',
                              dest='allowPara',
                              help='allow multiprocessing',
-                             default=0,
+                             default=1,
                              type='int')
         optparser.add_option('-m', '--cores',
                              dest='numCores',
@@ -127,5 +128,5 @@ if __name__ == "__main__":
     wr_text = ("Run-time: " + str(end - start) + " seconds\n")
     wr_text += str(res_text)
     f_name = str('res_trenc' + str(end).replace('.', '', 1) + '.txt')
-    # HandleData.write_file(wr_text, f_name)
+    HandleData.write_file(wr_text, f_name)
     print(wr_text)
