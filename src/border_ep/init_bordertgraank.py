@@ -8,7 +8,7 @@
 @modified: "13 May 2020"
 
 Usage:
-    $python init_bordertgraank.py -t pType -f fileName.csv -c refCol -s minSup  -r minRep
+    $python3 init_bordertgraank.py -f fileName.csv -c refCol -s minSup  -r minRep
 
 Description:
     f -> file path (CSV)

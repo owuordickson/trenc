@@ -1,3 +1,22 @@
+"""
+@author: "Dickson Owuor"
+@credits: "Joseph Orero and Anne Laurent,"
+@license: "MIT"
+@version: "1.0"
+@email: "owuordickson@gmail.com"
+@created: "02 April 2020"
+@modified: "02 June 2020"
+
+Usage:
+    $python3 init_trenc.py -f fileName.csv -c refCol -s minSup  -r minRep
+
+Description:
+    f -> file path (CSV)
+    c -> reference column
+    s -> minimum support
+    r -> representativity
+
+"""
 
 import sys
 from optparse import OptionParser
