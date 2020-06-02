@@ -19,18 +19,19 @@ You will be required to install the following python dependencies before using <
 ### Usage:
 Use it a command line program with the local package:
 ```
-$python border_tgraank.py -t pType -f fileName.csv -c refCol -s minSup  -r minRep
+$python init_bordertgraank.py -f fileName.csv -c refCol -s minSup  -r minRep -p allowPara -m cores
 ```
 
-The input parameters are: ```fileName.csv, refColumn, minSupport, minRepresentativity```. You are required to use a <strong>file</strong> in csv format and make sure the <i>timestamp column</i> is the first column in the file. You specify:
-* <strong>pattern type (pType)</strong> - choose between mining: (1) fuzzy-temporal patterns or (2) emerging fuzzy-temporal patterns
+The input parameters (required) are: ```fileName.csv, refColumn, minSupport, minRepresentativity```. You are required to use a <strong>file</strong> in csv format and make sure the <i>timestamp column</i> is the first column in the file. You specify:
 * <strong>reference item (refCol)</strong> - column\attribute that is the base of the temporal transformations
 * <strong>minimum support(minSup)</strong> - threshold count of frequent FtGPs
 * <strong>mimimum representativity (minRep)</strong> - threshold count of transformations to be performed on the data-set
+* <strong>allow multiprocessing (allowPara)</strong> - binary for allowing parallel multiprocessing or not
+* <strong>number of cores (cores)</strong> - explicitly indicate number of cores to be reserved for usage
 
 Example with a data-set and specified values<br>
 ```
-$python border_tgraank.py -t 2 -f DATASET.csv -c 0 -s 0.52 -r 0.5
+$python init_bordertgraank.py -f DATASET.csv -c 0 -s 0.52 -r 0.5 -p 1
 ```
 
 Output:
