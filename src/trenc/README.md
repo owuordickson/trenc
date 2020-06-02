@@ -1,7 +1,7 @@
 ## TRENC
 
 ### Requirements:
-You will be required to install the following python dependencies before using <em><strong>Border</strong>T-GRAANK</em> algorithm:
+You will be required to install the following python dependencies before using <em><strong>TRENC</strong></em> algorithm:
 ```
                    install python (version => 3.6)
 
