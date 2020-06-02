@@ -35,17 +35,21 @@ $python border_tgraank.py -t 2 -f DATASET.csv -c 0 -s 0.52 -r 0.5
 
 Output:
 ```
-Dataset Ok
-Total Data Transformations: 8 | Minimum Support: 0.52
-------------------------------------------------------------------------
-1 : exercise_hours**
-2 : exercise_sessions
-3 : stress_level
-4 : calories
-Emerging Pattern | Time Lags: (Dataset 1, Dataset 2)
-[[('4+', '3+'), '4+']] : ('~ +6.0 days : 1.0', '~ +4.8 days : 1.0')
-[['2+', ('2+', '1+')]] : ('~ +6.0 days : 1.0', '~ +1.35 weeks : 1.0')
-[[('4+', '3+'), '4+']] : ('~ +6.0 days : 1.0', '~ +1.35 weeks : 1.0')
+Run-time: 0.5971848964691162 seconds
+Algorithm: Border-TGRAANK 
+No. of data sets: 8
+No. of (dataset) attributes: 5
+Minimum support: 0.5
+Minimum representativity: 0.5
+Multi-core execution: True
+Number of cores: 4
+
+
+Emerging Pattern | Time Lags: (Transformation n, Transformation m)
+
+[[('1+', '4+'), '4+']] | ('~ +6.0 days : 1.0', '~ +4.8 days : 1.0')
+[[('4+', '3+'), '4+']] | ('~ +6.0 days : 1.0', '~ +4.8 days : 1.0')
+[[('1+', '3-'), '3-']] | ('~ +6.0 days : 1.0', '~ +1.1428571428571428 weeks : 0.5')
 
 Total: 3 FtGEPs found!
 ------------------------------------------------------------------------
