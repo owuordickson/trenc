@@ -13,6 +13,8 @@ You will be required to install the following python dependencies before using <
 
 ```
 
+### Usage:
+
 Example with a data-set and specified values<br>
 ```
 $python init_trenc.py -f DATASET.csv -c 0 -s 0.5 -r 0.5 -p 1
@@ -71,8 +73,6 @@ Patterns
  --- end --- 
 ```
 
-
-### Usage:
 
 ### License:
 * MIT
