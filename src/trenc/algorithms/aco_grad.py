@@ -12,8 +12,8 @@
 import numpy as np
 import random as rand
 # import matplotlib.pyplot as plt
-from src.algorithms.trenc.fuzzy_mf import FuzzyMF
-from src.algorithms.trenc.gp import GP, TGP
+from src.trenc.algorithms.fuzzy_mf import FuzzyMF
+from src.trenc.algorithms.gp import GP, TGP
 
 
 class GradACO:

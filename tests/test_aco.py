@@ -19,9 +19,9 @@ Description:
 import sys
 from optparse import OptionParser
 # from src import HandleData, GradACO
-from src.algorithms.trenc.multiprocess import InitParallel
-from src.algorithms.trenc.handle_data import HandleData
-from src.algorithms.trenc.aco_grad import GradACO
+from src.trenc.algorithms.multiprocess import InitParallel
+from src.trenc.algorithms.handle_data import HandleData
+from src.trenc.algorithms.aco_grad import GradACO
 
 
 def init_algorithm(f_path, min_supp, cores, eq=False):

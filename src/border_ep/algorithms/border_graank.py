@@ -13,7 +13,7 @@ import gc
 import sys
 import ntpath
 
-from src.algorithms.border_ep.mbdll_border import *
+from src.border_ep.algorithms.mbdll_border import *
 
 
 def Trad(fileName):

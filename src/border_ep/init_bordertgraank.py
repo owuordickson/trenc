@@ -20,10 +20,10 @@ Description:
 
 import sys
 from optparse import OptionParser
-from src.algorithms.border_ep.mbdll_border import *
-from src.algorithms.border_ep.border_tgraank import *
-from src.algorithms.trenc.handle_data import HandleData
-from src.algorithms.border_ep.t_graank import Tgraank
+from src.border_ep.algorithms.mbdll_border import *
+from src.border_ep.algorithms.border_tgraank import *
+from src.trenc.algorithms.handle_data import HandleData
+from src.border_ep.algorithms.t_graank import Tgraank
 
 
 def algorithm_ep_init(filename, ref_item, minsup, minrep, cores, allow_para):

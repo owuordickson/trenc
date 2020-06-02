@@ -5,8 +5,8 @@
 
 """
 import multiprocessing as mp
-from src.algorithms.border_ep.border_tgraank import *
-from src.algorithms.trenc.multiprocess import InitParallel
+from src.border_ep.algorithms.border_tgraank import *
+from src.trenc.algorithms.multiprocess import InitParallel
 
 
 class Tgraank:

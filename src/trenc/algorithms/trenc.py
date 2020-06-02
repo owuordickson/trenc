@@ -13,11 +13,11 @@ This algorithm implements and modifies
 
 import multiprocessing as mp
 import numpy as np
-from src.algorithms.trenc.multiprocess import InitParallel
-from src.algorithms.trenc.handle_data import HandleData
-from src.algorithms.trenc.aco_grad import GradACO
-from src.algorithms.trenc.aco_t_graank import TgradACO
-from src.algorithms.trenc.ep import EP, JEP
+from src.trenc.algorithms.multiprocess import InitParallel
+from src.trenc.algorithms.handle_data import HandleData
+from src.trenc.algorithms.aco_grad import GradACO
+from src.trenc.algorithms.aco_t_graank import TgradACO
+from src.trenc.algorithms.ep import EP, JEP
 
 
 class Trenc:

@@ -1,8 +1,8 @@
 
 import sys
 from optparse import OptionParser
-from src.algorithms.trenc.trenc import Trenc
-from src.algorithms.trenc.handle_data import HandleData
+from src.trenc.algorithms.trenc import Trenc
+from src.trenc.algorithms.handle_data import HandleData
 
 
 def init_trenc(paths, minSup, ref_item, cores, allow_para, minRep):

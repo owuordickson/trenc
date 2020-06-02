@@ -11,8 +11,8 @@ EP (Emerging Pattern): this class stores attributes of an (jumping) emerging pat
 """
 
 import json
-from src.algorithms.trenc.fuzzy_mf import FuzzyMF
-from src.algorithms.trenc.handle_data import HandleData
+from src.trenc.algorithms.fuzzy_mf import FuzzyMF
+from src.trenc.algorithms.handle_data import HandleData
 
 
 class JEP:
