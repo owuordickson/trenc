@@ -1,6 +1,9 @@
 ## TRENC
 
+A python implementation of Temporal gRadual Emerging aNt Colony optimization (TRENC) algorithm.
+
 ### Requirements:
+
 You will be required to install the following python dependencies before using <em><strong>TRENC</strong></em> algorithm:
 ```
                    install python (version => 3.6)
@@ -75,6 +78,7 @@ Patterns
 
 
 ### License:
+
 * MIT
 
 ### References:
