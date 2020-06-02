@@ -1,3 +1,5 @@
+[![Build Status](https://travis-ci.org/owuordickson/trenc.svg?branch=master)](https://travis-ci.org/owuordickson/trenc)
+
 ## TRENC
 
 A python implementation of Temporal gRadual Emerging aNt Colony optimization (TRENC) algorithm.
