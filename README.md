@@ -2,6 +2,6 @@
 
 We implement two approaches for mining TGEPs:
 
-* TRENC (https://github.com/owuordickson/trenc/tree/master/src/trenc)
+* TRENC [src/trenc](https://github.com/owuordickson/trenc/tree/master/src/trenc)
 
-* Border-TGRAANK (https://github.com/owuordickson/trenc/tree/master/src/border_ep)
+* Border-TGRAANK [src/border_ep](https://github.com/owuordickson/trenc/tree/master/src/border_ep)
