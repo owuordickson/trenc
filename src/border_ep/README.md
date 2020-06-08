@@ -1,7 +1,7 @@
 [![Build Status](https://travis-ci.org/owuordickson/trenc.svg?branch=master)](https://travis-ci.org/owuordickson/trenc)
 
 ## Border T-GRAANK
-A python implementation of the <i>Border Temporal-GRAdual rANKing</i> algorithm. The algorithm is formulated through the combination of two algorithms: <em><strong>MBD-LL</strong>Border</em> and <em>T-GRAANK</em>.<br>
+A python implementation of the <i>Border Temporal-GRAdual rANKing</i> algorithm. The algorithm is built from two algorithms: <em><strong>MBD-LL</strong>Border</em> and <em>T-GRAANK</em>.<br>
 <!-- Research paper published at FuzzIEEE 2019 International Conference on Fuzzy Systems (New Orleans): link<br> -->
 
 ### Requirements:
