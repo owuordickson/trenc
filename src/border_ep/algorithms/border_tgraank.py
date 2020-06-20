@@ -366,7 +366,7 @@ def get_maximal_items(init_list, tlag_list):
                     for item in comb:
                         if tuple(item[0]) == item_i:
                             comb.remove(item)
-                except:
+                except Exception:
                     continue
     return comb
 

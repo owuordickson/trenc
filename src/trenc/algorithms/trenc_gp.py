@@ -74,8 +74,8 @@ class Trenc:
         if not ok:
             raise Exception("Data sets have different columns")
         else:
-            gp_list = self.fetch_patterns()
-            geps = Trenc.construct_eps(set_id, gp_list)
+            gp_list = self.fetch_gps()
+            geps = Trenc.construct_geps(set_id, gp_list)
             return geps
 
     def check_ds_titles(self):
@@ -87,7 +87,7 @@ class Trenc:
         self.titles = self.d_sets[0].title
         return True
 
-    def fetch_patterns(self):
+    def fetch_gps(self):
         if self.allow_parallel:
             num_cores = self.cores
             pool = mp.Pool(num_cores)
@@ -119,7 +119,7 @@ class Trenc:
         return ac
 
     @staticmethod
-    def construct_eps(ds_id, gp_list):
+    def construct_geps(ds_id, gp_list):
         geps = list()
         if ds_id < len(gp_list):
             # 1. generate GR matrix
@@ -142,16 +142,12 @@ class Trenc:
                     temp_geps = Trenc.construct_gps(temp)
                     for ep in temp_geps:
                         geps.append(ep)
-                    #for jep in temp_jeps:
-                    #    jeps.append(jep)
             return geps
         else:
             raise Exception("Selected data-set/file does not exist")
 
     @staticmethod
     def construct_gps(GR_matrix):
-        eps = list()
-        jeps = list()
         geps = list()
         size = len(GR_matrix)
 
@@ -176,14 +172,12 @@ class Trenc:
                 pat = [gp, incr]
                 for j in range(i+1, size, 1):
                     row_j = GR_matrix[j]
-                    pat = Trenc.combine_patterns(pat, row_j, j)
+                    pat = Trenc.combine_gps(pat, row_j, j)
                 if len(pat[0].gradual_items) > 1:
                     if pat[1] == -1:
                         gep = GEP(pat[0])
-                    #    jeps.append(jep)
                     else:
                         gep = GEP(pat[0], pat[1])
-                    #    eps.append(ep)
                     geps.append(gep)
 
             if decr > 0 or decr == -1:
@@ -192,20 +186,17 @@ class Trenc:
                 pat = [gp, decr]
                 for j in range(i+1, size, 1):
                     row_j = GR_matrix[j]
-                    pat = Trenc.combine_patterns(pat, row_j, j)
+                    pat = Trenc.combine_gps(pat, row_j, j)
                 if len(pat[0].gradual_items) > 1:
                     if pat[1] == -1:
-                        jep = GEP(pat[0])
-                        #jeps.append(jep)
+                        gep = GEP(pat[0])
                     else:
-                        ep = GEP(pat[0], pat[1])
-                        #eps.append(ep)
+                        gep = GEP(pat[0], pat[1])
                     geps.append(gep)
-        # print([ep, jep])
         return geps
 
     @staticmethod
-    def combine_patterns(pat, row, attr):
+    def combine_gps(pat, row, attr):
         if row[0] > 0:
             dir_ = row[0]
             sign = '+'
