@@ -15,21 +15,41 @@ Description: updated version that uses aco-graank and parallel multi-processing
 
 import numpy as np
 import multiprocessing as mp
-from .aco_grad_gr import GradACO
+from .aco_grad_gr import GradACOgr
 from ...common.fuzzy_mf import calculate_time_lag
 from ...common.gp import GP, TGP
 from ...common.dataset import Dataset
 from ...common.profile_cpu import Profile
 
 
-class GradACOt (GradACO):
+class GradACOt_gr (GradACOgr):
 
     def __init__(self, d_set, attr_data, t_diffs):
-        self.d_set = d_set
+        super().__init__(d_set)
+        self.tstamp_matrix = np.array([])
         self.time_diffs = t_diffs
-        self.attr_index = self.d_set.attr_cols
-        self.p_matrix = np.ones((self.d_set.column_size, 3), dtype=float)
         self.d_set.update_attributes(attr_data)
+
+    def deposit_pheromone(self, pattern=TGP()):
+        lst_attr = []
+        for obj in pattern.gradual_items:
+            # print(obj.attribute_col)
+            attr = obj.attribute_col
+            symbol = obj.symbol
+            lst_attr.append(attr)
+            i = attr
+            if symbol == '+':
+                self.p_matrix[i][0] += pattern.support
+                self.steps_matrix[i][0] += 1
+                self.tstamp_matrix[i][0].append(pattern.time_lag)
+            elif symbol == '-':
+                self.p_matrix[i][0] += pattern.support
+                self.steps_matrix[i][0] += 1
+                self.tstamp_matrix[i][0].append(pattern.time_lag)
+        for index in self.attr_index:
+            if int(index) not in lst_attr:
+                i = int(index)
+                self.p_matrix[i][2] += 1
 
     def validate_gp(self, pattern):
         # pattern = [('2', '+'), ('4', '+')]
@@ -67,7 +87,7 @@ class GradACOt (GradACO):
             return tgp
 
 
-class T_GradACO:
+class T_GradACOgr:
 
     def __init__(self, f_path, eq, ref_item, min_sup, min_rep, cores):
         # For tgraank
@@ -125,10 +145,19 @@ class T_GradACO:
         attr_data, time_diffs = self.transform_data(step)
 
         # 2. Execute aco-graank for each transformation
-        ac = GradACOt(d_set, attr_data, time_diffs)
+        ac = GradACOt_gr(d_set, attr_data, time_diffs)
         list_gp = ac.run_ant_colony()
-        # print("\nPheromone Matrix")
-        # print(ac.p_matrix)
+
+        # 3. Update Support Matrix
+        p_matrix = (ac.p_matrix - 1)
+        st_matrix = ac.steps_matrix
+
+        with np.errstate(divide='ignore', invalid='ignore'):
+            temp = np.true_divide(p_matrix, st_matrix)
+            temp[temp == np.inf] = 0  # convert inf to 0
+            temp = np.nan_to_num(temp)  # convert Nan to 0
+        ac.sup_matrix = temp
+
         if len(list_gp) > 0:
             return list_gp
         return False

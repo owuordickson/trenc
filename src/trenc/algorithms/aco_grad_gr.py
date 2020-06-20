@@ -12,6 +12,7 @@
 
 import numpy as np
 from ...common.aco_grad import GradACO
+from ...common.gp import GP
 
 
 class GradACOgr(GradACO):
@@ -25,7 +26,7 @@ class GradACOgr(GradACO):
         self.steps_matrix = np.zeros((self.d_set.column_size, 3), dtype=int)
         self.sup_matrix = np.array([])
 
-    def deposit_pheromone(self, pattern):
+    def deposit_pheromone(self, pattern=GP()):
         lst_attr = []
         for obj in pattern.gradual_items:
             # print(obj.attribute_col)

@@ -20,7 +20,7 @@ from ...common.gp import GI, GP
 from ...common.ep import GEP
 
 
-class Trenc:
+class Trenc_GP:
 
     def __init__(self, f_paths, min_sup, cores=0, allow_para=1):
         self.min_sup = min_sup
@@ -75,15 +75,21 @@ class Trenc:
             raise Exception("Data sets have different columns")
         else:
             gp_list = self.fetch_gps()
-            geps = Trenc.construct_geps(set_id, gp_list)
+            geps = Trenc_GP.construct_geps(set_id, gp_list)
             return geps
 
     def check_ds_titles(self):
-        count = len(self.d_sets[0].title)
-        for i in range(1, len(self.d_sets)):
-            temp = len(self.d_sets[i].title)
-            if temp != count:
-                return False
+        for d_set in self.d_sets:
+            titles_1 = d_set.title
+            for obj_set in self.d_sets:
+                titles_2 = obj_set.title
+                if (titles_1 == titles_2).all():
+                    continue
+                else:
+                    for title_1 in titles_1:
+                        ok = Trenc_GP.test_titles(title_1, titles_2)
+                        if not ok:
+                            return False
         self.titles = self.d_sets[0].title
         return True
 
@@ -139,7 +145,7 @@ class Trenc:
                     # GR = [temp, gp_1, gp_2]
                     # GR_list.append(GR)
                     # 2. construct EPs
-                    temp_geps = Trenc.construct_gps(temp)
+                    temp_geps = Trenc_GP.construct_gps(temp)
                     for ep in temp_geps:
                         geps.append(ep)
             return geps
@@ -172,7 +178,7 @@ class Trenc:
                 pat = [gp, incr]
                 for j in range(i+1, size, 1):
                     row_j = GR_matrix[j]
-                    pat = Trenc.combine_gps(pat, row_j, j)
+                    pat = Trenc_GP.combine_gps(pat, row_j, j)
                 if len(pat[0].gradual_items) > 1:
                     if pat[1] == -1:
                         gep = GEP(pat[0])
@@ -186,7 +192,7 @@ class Trenc:
                 pat = [gp, decr]
                 for j in range(i+1, size, 1):
                     row_j = GR_matrix[j]
-                    pat = Trenc.combine_gps(pat, row_j, j)
+                    pat = Trenc_GP.combine_gps(pat, row_j, j)
                 if len(pat[0].gradual_items) > 1:
                     if pat[1] == -1:
                         gep = GEP(pat[0])
@@ -214,3 +220,11 @@ class Trenc:
             return pat
         else:
             return []
+
+    @staticmethod
+    def test_titles(title_1, titles_2):
+        for item_2 in titles_2:
+            title_2 = item_2[1]
+            if title_1[1] == title_2:
+                return True
+        return False

@@ -20,7 +20,7 @@ Description:
 
 import sys
 from optparse import OptionParser
-from src.trenc.algorithms.trenc_gp import Trenc
+from src.trenc.algorithms.trenc_gp import Trenc_GP
 
 
 def init_trenc(paths, minSup, ref_item, cores, allow_para, minRep):
@@ -28,9 +28,9 @@ def init_trenc(paths, minSup, ref_item, cores, allow_para, minRep):
         # wr_line = ""
         # ep_set = Trenc(paths, 0.5)
         if minRep == 0:
-            ep_set = Trenc(paths, minSup, cores, allow_para)
+            ep_set = Trenc_GP(paths, minSup, cores, allow_para)
         else:
-            ep_set = Trenc(paths, minSup, cores, allow_para, minRep, ref_item)
+            ep_set = Trenc_GP(paths, minSup, cores, allow_para, minRep, ref_item)
         gep_list = ep_set.run_trenc(0)
 
         wr_line = "Algorithm: TRENC \n"
