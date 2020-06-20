@@ -22,7 +22,6 @@ import sys
 from optparse import OptionParser
 from src.border_ep.algorithms.mbdll_border import *
 from src.border_ep.algorithms.border_tgraank import *
-from src.trenc.algorithms.handle_data import HandleData
 from src.border_ep.algorithms.t_graank import Tgraank
 
 
@@ -88,6 +87,12 @@ def algorithm_ep_init(filename, ref_item, minsup, minrep, cores, allow_para):
         wr_line = "Failed: " + str(error)
         print(error)
         return wr_line
+
+
+def write_file(data, path):
+    with open(path, 'w') as f:
+        f.write(data)
+        f.close()
 
 
 if __name__ == "__main__":
@@ -169,5 +174,5 @@ if __name__ == "__main__":
     wr_text = ("Run-time: " + str(end - start) + " seconds\n")
     wr_text += str(res_text)
     f_name = str('res_border' + str(end).replace('.', '', 1) + '.txt')
-    HandleData.write_file(wr_text, f_name)
+    # write_file(wr_text, f_name)
     print(wr_text)

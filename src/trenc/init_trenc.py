@@ -20,8 +20,7 @@ Description:
 
 import sys
 from optparse import OptionParser
-from src.trenc.algorithms.trenc import Trenc
-from src.trenc.algorithms.handle_data import HandleData
+from src.trenc.algorithms.trenc_gp import Trenc
 
 
 def init_trenc(paths, minSup, ref_item, cores, allow_para, minRep):
@@ -29,15 +28,15 @@ def init_trenc(paths, minSup, ref_item, cores, allow_para, minRep):
         # wr_line = ""
         # ep_set = Trenc(paths, 0.5)
         if minRep == 0:
-            ep_set = Trenc(paths, minSup, cores, allow_para, None, None)
+            ep_set = Trenc(paths, minSup, cores, allow_para)
         else:
             ep_set = Trenc(paths, minSup, cores, allow_para, minRep, ref_item)
-        ep_list, jep_list = ep_set.run_trenc(0)
+        gep_list = ep_set.run_trenc(0)
 
         wr_line = "Algorithm: TRENC \n"
         wr_line += "No. of data sets: " + str(len(ep_set.d_sets)) + '\n'
         wr_line += "No. of (data set) attributes: " + str(len(ep_set.titles)) + '\n'
-        if ep_set.min_rep is None:
+        if minRep == 0:
             wr_line += "Size of 1st data set: " + str(ep_set.d_sets[0].size) + '\n'
         else:
             wr_line += "Size of 1st data set: " + str(ep_set.d_sets[0][0].size) + '\n'
@@ -52,23 +51,23 @@ def init_trenc(paths, minSup, ref_item, cores, allow_para, minRep):
             for txt in titles:
                 col = int(txt[0])
                 if col == ref_item:
-                    wr_line += (str(col) + '. ' + str(txt[1]) + '**' + '\n')
+                    wr_line += (str(col) + '. ' + str(txt[1].decode()) + '**' + '\n')
                 else:
-                    wr_line += (str(col) + '. ' + str(txt[1]) + '\n')
+                    wr_line += (str(col) + '. ' + str(txt[1].decode()) + '\n')
         else:
             for txt in titles:
-                wr_line += (str(txt[0]) + '. ' + str(txt[1]) + '\n')
+                wr_line += (str(txt[0]) + '. ' + str(txt[1].decode()) + '\n')
 
-        wr_line += str("\nFile: " + paths + '\n')
+        wr_line += str("\nFiles: " + paths + '\n')
         wr_line += str("Patterns" + '\n\n')
 
-        if len(ep_list) < 1 and len(jep_list) < 1:
+        if len(gep_list) < 1:  # and len(jep_list) < 1:
             wr_line += 'No emerging patterns found\n'
         else:
-            for ep in ep_list:
-                wr_line += str(ep.pattern_info) + '\n'
-            for jep in jep_list:
-                wr_line += str(jep.pattern_info) + '\n'
+            for ep in gep_list:
+                wr_line += str(ep.jsonify()) + '\n'
+            #for jep in jep_list:
+            #    wr_line += str(jep.jsonify()) + '\n'
         wr_line += '\n\n --- end --- \n\n '
         # wr_line += 'RAW PATTERNS\n'
         # for obj in ep_set.GR_list:
@@ -77,10 +76,16 @@ def init_trenc(paths, minSup, ref_item, cores, allow_para, minRep):
         #    wr_line += '\n\n'
         # print(wr_line)
         return wr_line
-    except Exception as error:
+    except ArithmeticError as error:
         wr_line = "Failed: " + str(error)
         print(error)
         return wr_line
+
+
+def write_file(data, path):
+    with open(path, 'w') as f:
+        f.write(data)
+        f.close()
 
 
 if __name__ == "__main__":
@@ -97,7 +102,8 @@ if __name__ == "__main__":
                              dest='file',
                              help='path to file containing csv',
                              # default=None,
-                             default='../data/DATASET.csv',
+                             default='../data/DATASET.csv, ../data/DATASET1.csv',
+                             #default='../data/rain_temp1991-2015.csv, ../data/rain_temp2013-2015.csv',
                              type='string')
         optparser.add_option('-c', '--refColumn',
                              dest='refCol',
@@ -112,7 +118,8 @@ if __name__ == "__main__":
         optparser.add_option('-r', '--minRepresentativity',
                              dest='minRep',
                              help='minimum representativity',
-                             default=0.5,
+                             #default=0.5,
+                             default=0,
                              type='float')
         optparser.add_option('-p', '--allowMultiprocessing',
                              dest='allowPara',
@@ -147,5 +154,5 @@ if __name__ == "__main__":
     wr_text = ("Run-time: " + str(end - start) + " seconds\n")
     wr_text += str(res_text)
     f_name = str('res_trenc' + str(end).replace('.', '', 1) + '.txt')
-    HandleData.write_file(wr_text, f_name)
+    # write_file(wr_text, f_name)
     print(wr_text)

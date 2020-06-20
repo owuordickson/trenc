@@ -15,8 +15,8 @@ import multiprocessing as mp
 import numpy as np
 from src.trenc.algorithms.multiprocess import InitParallel
 from src.trenc.algorithms.handle_data import HandleData
-from src.trenc.algorithms.aco_grad import GradACO
-from src.trenc.algorithms.aco_t_graank import TgradACO
+from src.trenc.algorithms.aco_grad_gr import GradACO
+from src.trenc.algorithms.aco_tgrad import TgradACO
 from src.trenc.algorithms.ep import EP, JEP
 
 

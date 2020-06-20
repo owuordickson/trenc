@@ -22,7 +22,7 @@ import sys
 from optparse import OptionParser
 # from src import HandleData, TgradACO
 from src.trenc.algorithms.handle_data import HandleData
-from src.trenc.algorithms.aco_t_graank import TgradACO
+from src.trenc.algorithms.aco_tgrad import TgradACO
 
 
 def init_algorithm(f_path, refItem, minSup, minRep, allowPara, eq=False):

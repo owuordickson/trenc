@@ -11,8 +11,6 @@ EP (Emerging Pattern): this class stores attributes of an (jumping) emerging pat
 """
 
 import json
-from src.trenc.algorithms.fuzzy_mf import FuzzyMF
-from src.trenc.algorithms.handle_data import HandleData
 
 
 class JEP:
@@ -23,23 +21,13 @@ class JEP:
         self.pattern_info = self.format_info()
 
     def format_info(self):
-        pat = str(HandleData.format_gp(self.pattern))
         if self.t_lag is None:
-            json_txt = {"pattern": pat, "type": "Jumping Emerging GP"}
+            json_txt = {"pattern": str(self.pattern.get_tuples()), "type": "Jumping Emerging GP"}
             return json.dumps(json_txt, indent=4)
         else:
-            t_lag_txt = EP.format_time_lag(self.t_lag)
-            json_txt = {"pattern": pat, "type": "Jumping Emerging TGP",
-                        "time_lag": t_lag_txt}
+            json_txt = {"pattern": str(self.pattern.get_tuples()), "type": "Jumping Emerging TGP",
+                        "time_lag": self.t_lag.to_string()}
             return json.dumps(json_txt, indent=4)
-
-    @staticmethod
-    def format_time_lag(t_lag):
-        tlag_fmt = FuzzyMF.get_time_format(t_lag[0])
-        sup = t_lag[1]
-        t_lag_txt = ("~ " + tlag_fmt[0] + str(tlag_fmt[1]) +
-                     " " + str(tlag_fmt[2]) + " : " + str(sup))
-        return t_lag_txt
 
 
 class EP(JEP):
@@ -50,24 +38,21 @@ class EP(JEP):
         super().__init__(pattern, t_lag)
 
     def format_info(self):
-        pat = str(HandleData.format_gp(self.pattern))
         if self.t_lag is None:
-            json_txt = {"pattern": pat, "type": "Emerging GP",
+            json_txt = {"pattern": str(self.pattern.get_tuples()), "type": "Emerging GP",
                         "growth_rate": self.gr}
             return json.dumps(json_txt, indent=4)
         else:
-            t_lag_txt = EP.format_time_lag(self.t_lag)
             if self.t_lags is None:
-                json_txt = {"pattern": pat, "type": "Emerging TGP",
-                            "time_lag": t_lag_txt, "growth_rate": self.gr}
+                json_txt = {"pattern": str(self.pattern.get_tuples()), "type": "Emerging TGP",
+                            "time_lag": self.t_lag.to_string(), "growth_rate": self.gr}
             else:
                 t_lags_txt = []
                 for obj in self.t_lags:
                     t_lag = obj[0]
                     gr = obj[1]
-                    t_lag_txt = EP.format_time_lag(t_lag)
-                    txt = {"time_lag": t_lag_txt, "growth_rate": gr}
+                    txt = {"time_lag": self.t_lag.to_string(), "growth_rate": gr}
                     t_lags_txt.append(txt)
-                json_txt = {"pattern": pat, "type": "Emerging TGP",
-                            "time_lag": t_lag_txt, "emergence": t_lags_txt}
+                json_txt = {"pattern": str(self.pattern.get_tuples()), "type": "Emerging TGP",
+                            "time_lag": self.t_lag.to_string(), "emergence": t_lags_txt}
             return json.dumps(json_txt, indent=4)

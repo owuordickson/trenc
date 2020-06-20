@@ -5,6 +5,7 @@
 @version: "1.0"
 @email: "owuordickson@gmail.com"
 @created: "5 November 2019"
+@modified: "12 May 2020"
 
 """
 
@@ -13,11 +14,11 @@ import os
 import multiprocessing as mp
 
 
-class InitParallel:
+class Profile:
 
     @staticmethod
     def get_num_cores():
-        num_cores = InitParallel.get_slurm_cores()
+        num_cores = Profile.get_slurm_cores()
         if not num_cores:
             num_cores = mp.cpu_count()
         return num_cores
