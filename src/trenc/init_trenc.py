@@ -21,6 +21,7 @@ Description:
 import sys
 from optparse import OptionParser
 from src.trenc.algorithms.trenc_gp import Trenc_GP
+from src.trenc.algorithms.trenc_tgp import Trenc_TGP
 
 
 def init_trenc(paths, minSup, ref_item, cores, allow_para, minRep):
@@ -30,16 +31,16 @@ def init_trenc(paths, minSup, ref_item, cores, allow_para, minRep):
         if minRep == 0:
             ep_set = Trenc_GP(paths, minSup, cores, allow_para)
         else:
-            ep_set = Trenc_GP(paths, minSup, cores, allow_para, minRep, ref_item)
+            ep_set = Trenc_TGP(paths, minSup, minRep, ref_item, cores, allow_para)
         gep_list = ep_set.run_trenc(0)
 
         wr_line = "Algorithm: TRENC \n"
-        wr_line += "No. of data sets: " + str(len(ep_set.d_sets)) + '\n'
+        #wr_line += "No. of data sets: " + str(len(ep_set.d_sets)) + '\n'
         wr_line += "No. of (data set) attributes: " + str(len(ep_set.titles)) + '\n'
         if minRep == 0:
             wr_line += "Size of 1st data set: " + str(ep_set.d_sets[0].size) + '\n'
-        else:
-            wr_line += "Size of 1st data set: " + str(ep_set.d_sets[0][0].size) + '\n'
+        #else:
+        #    wr_line += "Size of 1st data set: " + str(ep_set.d_sets[0][0].size) + '\n'
         wr_line += "Minimum support: " + str(minSup) + '\n'
         wr_line += "Minimum representativity: " + str(minRep) + '\n'
         wr_line += "Multi-core execution: " + str(ep_set.msg_para) + '\n'
@@ -65,7 +66,7 @@ def init_trenc(paths, minSup, ref_item, cores, allow_para, minRep):
             wr_line += 'No emerging patterns found\n'
         else:
             for ep in gep_list:
-                wr_line += str(ep.jsonify()) + '\n'
+                wr_line += str(ep) + '\n'
             #for jep in jep_list:
             #    wr_line += str(jep.jsonify()) + '\n'
         wr_line += '\n\n --- end --- \n\n '
@@ -102,7 +103,8 @@ if __name__ == "__main__":
                              dest='file',
                              help='path to file containing csv',
                              # default=None,
-                             default='../data/DATASET.csv, ../data/DATASET1.csv',
+                             default='../data/DATASET.csv',
+                             #default='../data/DATASET.csv, ../data/DATASET1.csv',
                              #default='../data/rain_temp1991-2015.csv, ../data/rain_temp2013-2015.csv',
                              type='string')
         optparser.add_option('-c', '--refColumn',
@@ -118,8 +120,8 @@ if __name__ == "__main__":
         optparser.add_option('-r', '--minRepresentativity',
                              dest='minRep',
                              help='minimum representativity',
-                             #default=0.5,
-                             default=0,
+                             default=0.5,
+                             #default=0,
                              type='float')
         optparser.add_option('-p', '--allowMultiprocessing',
                              dest='allowPara',

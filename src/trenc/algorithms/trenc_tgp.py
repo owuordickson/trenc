@@ -15,76 +15,39 @@ import multiprocessing as mp
 import numpy as np
 from .trenc_gp import Trenc_GP
 from .aco_tgrad_gr import T_GradACOgr
+from ...common.gp import GI, GP, TimeLag
+from ...common.ep import TGEP
 from ...common.ep_old import EP, JEP
 from ...common.profile_cpu import Profile
 
 
 class Trenc_TGP(Trenc_GP):
 
-    def __init__(self, f_paths, min_sup, cores=0, allow_para=1, min_rep=None, ref_item=None):
-
+    def __init__(self, f_paths, min_sup, min_rep, ref_item, cores=0, allow_para=1):
         self.ref_item = ref_item
         self.min_rep = min_rep
         self.min_sup = min_sup
-        self.titles = []
-        self.GR_list = []
-
         if cores > 1:
             self.cores = cores
         else:
             self.cores = Profile.get_num_cores()
-
         if allow_para == 0:
             self.allow_parallel = False
             self.msg_para = "False"
         else:
             self.allow_parallel = True
             self.msg_para = "True"
+        self.GR_list = []
 
-        d_set = self.get_csv_data(f_paths)
-        self.tg_set = T_GradACOgr(d_set, self.ref_item, self.min_sup, self.min_rep, 0)
+        d_set = self.get_dataset(f_paths)
+        self.tg_set = T_GradACOgr(d_set, ref_item, min_rep, self.cores)
+        self.titles = d_set.title
 
-    def get_csv_data(self, raw_paths):
-        try:
-            lst_path = [x.strip() for x in raw_paths.split(',')]
-            for path in lst_path:
-                if path == '':
-                    lst_path.remove(path)
-            if len(lst_path) < 2:
-                raise Exception("File Path Error: less than 2 paths found")
-        except ValueError as error:
-            raise Exception("File Path Error: " + str(error))
-
-        if self.allow_parallel:
-            num_cores = self.cores
-            pool = mp.Pool(num_cores)
-            d_sets = pool.map(self.get_dataset, lst_path)
-            return d_sets
-        else:
-            d_sets = list()
-            for path in lst_path:
-                d_set = self.get_dataset(path)
-                d_sets.append(d_set)
-            return d_sets
-
-    def compare_ds_titles(self):
-        if self.min_rep is not None:
-            self.titles = self.d_sets[0][0].title
-            return True
-        else:
-            for d_set in self.d_sets:
-                titles_1 = d_set.title
-                for obj_set in self.d_sets:
-                    titles_2 = obj_set.title
-                    if titles_1 == titles_2:
-                        continue
-                    else:
-                        for title_1 in titles_1:
-                            ok = Trenc_GP.test_titles(title_1, titles_2)
-                            if not ok:
-                                return False
-            self.titles = self.d_sets[0].title
-            return True
+    def run_trenc(self, set_id=0):
+        tgp_list = self.tg_set.run_tgraank(self.allow_parallel)
+        GR_list = Trenc_TGP.gen_GR_matrix(set_id, tgp_list)
+        tgeps = Trenc_TGP.construct_tgeps(GR_list)
+        return tgeps
 
     @staticmethod
     def gen_GR_matrix(ds_id, gp_list):
@@ -126,7 +89,7 @@ class Trenc_TGP(Trenc_GP):
             return stamp_matrix
 
     @staticmethod
-    def construct_eps(GR_list):
+    def construct_tgeps(GR_list):
         eps = list()
         jeps = list()
         raw_ep1 = None
@@ -134,20 +97,14 @@ class Trenc_TGP(Trenc_GP):
             GR_matrix = GR[0]
             gp1_stamps = GR[1].tstamp_matrix
             gp2_stamps = GR[2].tstamp_matrix
-            if not gp1_stamps:
-                temp_eps, temp_jeps = Trenc_GP.construct_gps(GR_matrix)
-                for ep in temp_eps:
-                    eps.append(ep)
-                for jep in temp_jeps:
-                    jeps.append(jep)
-            else:
-                # eps, jeps = Trenc.construct_tgps1(GR_matrix, gp1_stamps, gp2_stamps)
-                if raw_ep1 is None:
-                    ok, raw_ep1 = Trenc_GP.construct_tgps(GR_matrix, gp1_stamps)
-                if raw_ep1 is not None:
-                    raw_ep1, raw_ep2 = Trenc_GP.construct_tgps(GR_matrix, gp2_stamps, ep=raw_ep1)
+
+            if raw_ep1 is None:
+                ok, raw_ep1 = Trenc_TGP.construct_tgps(GR_matrix, gp1_stamps)
+            if raw_ep1 is not None:
+                raw_ep1, raw_ep2 = Trenc_TGP.construct_tgps(GR_matrix, gp2_stamps, ep=raw_ep1)
+
         if raw_ep1 is not None:
-            temp_eps, temp_jeps = Trenc_GP.fetch_eps(raw_ep1)
+            temp_eps, temp_jeps = Trenc_TGP.fetch_eps(raw_ep1)
             for ep in temp_eps:
                 eps.append(ep)
             for jep in temp_jeps:
@@ -159,20 +116,20 @@ class Trenc_TGP(Trenc_GP):
         eps = list()
         jeps = list()
         for pat in raw_ep:
-            count = len(pat)
+            count = len(pat.gradual_items)
             if count == 2:
                 # this a 'Jumping Emerging Pattern'
-                gp = pat[0]
-                t_lag1 = pat[1]
+                gp = pat #pat[0]
+                t_lag1 = pat.time_lag #pat[1]
                 jep = JEP(gp, t_lag1)
                 jeps.append(jep)
             else:
                 # a normal 'Emerging Pattern'
-                gp = pat[0]
-                t_lag1 = pat[1]
-                t_lags = []
-                for i in range(2, count, 1):
-                    t_lags.append(pat[i])
+                gp = pat # pat[0]
+                t_lag1 = pat.time_lag # pat[1]
+                t_lags = pat.gr_timelags #[]
+                #for i in range(2, count, 1):
+                #    t_lags.append(pat[i])
                 ep = EP(gp, 0, t_lag1, t_lags)
                 eps.append(ep)
         return eps, jeps
@@ -188,16 +145,19 @@ class Trenc_TGP(Trenc_GP):
                 # gr = GR_matrix[i][j]
                 col = row[j]
                 for t_stamp in col:
-                    pat, gr, gp1_stamps = Trenc_GP.find_same_stamps(t_stamp, gp_stamps, GR_matrix)
-                    pattern = [pat, t_stamp]
-                    if pat and (pattern not in tgp):
+                    pat, gr, gp1_stamps = Trenc_TGP.find_same_stamps(t_stamp, gp_stamps, GR_matrix)
+                    if not pat:
+                        continue
+                    pattern = TGEP(pat, t_lag=TimeLag(tstamp=t_stamp))
+                    if pattern not in tgp:
                         tgp.append(pattern)
                         if ep is not None:
                             for k in range(len(ep)):
                                 obj = ep[k]
-                                pat1 = obj[0]
-                                if sorted(pat1) == sorted(pat):
-                                    ep[k].append([t_stamp, gr])
+                                pat1 = obj.get_pattern()  # obj[0]
+                                if sorted(pat1) == sorted(pat.get_pattern()):
+                                    ep[k].add_timestamp(t_stamp, gr)
+                                    # ep[k].append([t_stamp, gr])
         if ep is None:
             return False, tgp
         else:
@@ -206,7 +166,7 @@ class Trenc_TGP(Trenc_GP):
     @staticmethod
     def find_same_stamps(t_stamp, stamp_matrix, GR_matrix):
         attrs = list()
-        patterns = []
+        patterns = GP()
         gr = 0
         size = len(stamp_matrix)
         for i in range(size):
@@ -222,14 +182,14 @@ class Trenc_TGP(Trenc_GP):
                         sign = '-'
                     else:
                         continue
-                    pat = tuple([attr, sign])
-                    if (pat not in patterns) and (attr not in attrs):
+                    gi = GI(attr, sign)
+                    if (gi not in patterns.gradual_items) and (attr not in attrs):
                         attrs.append(attr)
-                        patterns.append(pat)
+                        patterns.add_gradual_item(gi)
                         temp_gr = GR_matrix[i][j]
                         gr = temp_gr if (gr == 0) or (temp_gr < gr) else gr
                     stamp_matrix[i][j].remove(t_stamp)
-        if len(patterns) > 1:
+        if len(patterns.gradual_items) > 1:
             return patterns, gr, stamp_matrix
         else:
             return False, gr, stamp_matrix

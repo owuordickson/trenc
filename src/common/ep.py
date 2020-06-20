@@ -11,7 +11,7 @@ EP (Emerging Pattern): this class stores attributes of an (jumping) emerging pat
 """
 
 import json
-from .gp import GP
+from .gp import GP, TGP, TimeLag
 
 
 class GEP(GP):
@@ -30,3 +30,20 @@ class GEP(GP):
             json_txt = {"pattern": str(self.get_tuples()),
                         "type": "Jumping Emerging GP"}
         return json.dumps(json_txt, indent=4)
+
+
+class TimeLag_gr(TimeLag):
+
+    def __init__(self, tstamp=0, supp=0, gr=0):
+        super().__init__(tstamp, supp)
+        self.growth_rate = gr
+
+
+class TGEP(TGP):
+
+    def __init__(self, gp=GP(), t_lag=TimeLag()):
+        super().__init__(gp, t_lag)
+        self.gr_timelags = list()
+
+    def add_timestamp(self, tstamp, gr):
+        self.gr_timelags.append(TimeLag_gr(tstamp=tstamp, gr=gr))

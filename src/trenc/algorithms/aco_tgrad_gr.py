@@ -26,7 +26,7 @@ class GradACOt_gr (GradACOgr):
 
     def __init__(self, d_set, attr_data, t_diffs):
         super().__init__(d_set)
-        self.tstamp_matrix = np.array([])
+        self.tstamp_matrix = [[[] for i in range(3)] for j in range(d_set.column_size)]
         self.time_diffs = t_diffs
         self.d_set.update_attributes(attr_data)
 
@@ -41,11 +41,11 @@ class GradACOt_gr (GradACOgr):
             if symbol == '+':
                 self.p_matrix[i][0] += pattern.support
                 self.steps_matrix[i][0] += 1
-                self.tstamp_matrix[i][0].append(pattern.time_lag)
+                self.tstamp_matrix[i][0].append(pattern.time_lag.timestamp)
             elif symbol == '-':
                 self.p_matrix[i][0] += pattern.support
                 self.steps_matrix[i][0] += 1
-                self.tstamp_matrix[i][0].append(pattern.time_lag)
+                self.tstamp_matrix[i][0].append(pattern.time_lag.timestamp)
         for index in self.attr_index:
             if int(index) not in lst_attr:
                 i = int(index)
@@ -89,16 +89,15 @@ class GradACOt_gr (GradACOgr):
 
 class T_GradACOgr:
 
-    def __init__(self, f_path, eq, ref_item, min_sup, min_rep, cores):
+    def __init__(self, d_set, ref_item, min_rep, cores):
         # For tgraank
-        # self.d_set = d_set
-        self.d_set = Dataset(f_path, min_sup=min_sup, eq=eq)
+        self.d_set = d_set
         cols = self.d_set.time_cols
         if len(cols) > 0:
             print("Dataset Ok")
             self.time_ok = True
             self.time_cols = cols
-            self.min_sup = min_sup
+            self.min_sup = d_set.thd_supp
             self.ref_item = ref_item
             self.max_step = self.get_max_step(min_rep)
             self.orig_attr_data = self.d_set.data.copy().T
@@ -114,7 +113,7 @@ class T_GradACOgr:
         return all_rows - int(min_rep * all_rows)
 
     def run_tgraank(self, parallel=False):
-        if parallel:
+        if not parallel:
             # implement parallel multi-processing
             if self.cores > 1:
                 num_cores = self.cores
@@ -126,17 +125,17 @@ class T_GradACOgr:
             steps = range(self.max_step)
             # pool = mp.Pool(num_cores)
             with mp.Pool(num_cores) as pool:
-                patterns = pool.map(self.fetch_patterns, steps)
+                aco_objs = pool.map(self.fetch_patterns, steps)
                 # pool.close()
                 # pool.join()
-            return patterns
+            return aco_objs
         else:
-            patterns = list()
+            aco_objs = list()
             for step in range(self.max_step):
-                t_pattern = self.fetch_patterns(step)
-                if t_pattern:
-                    patterns.append(t_pattern)
-            return patterns
+                ac = self.fetch_patterns(step)
+                if ac:
+                    aco_objs.append(ac)
+            return aco_objs
 
     def fetch_patterns(self, step):
         step += 1  # because for-loop is not inclusive from range: 0 - max_step
@@ -157,10 +156,10 @@ class T_GradACOgr:
             temp[temp == np.inf] = 0  # convert inf to 0
             temp = np.nan_to_num(temp)  # convert Nan to 0
         ac.sup_matrix = temp
-
-        if len(list_gp) > 0:
-            return list_gp
-        return False
+        return ac
+        #if len(list_gp) > 0:
+        #    return ac
+        #return False
 
     def transform_data(self, step):  # optimized
         # NB: Restructure dataset based on reference item

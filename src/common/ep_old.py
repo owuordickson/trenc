@@ -49,8 +49,8 @@ class EP(JEP):
             else:
                 t_lags_txt = []
                 for obj in self.t_lags:
-                    t_lag = obj[0]
-                    gr = obj[1]
+                    t_lag = obj.time_lag # obj[0]
+                    gr = obj.growth_rate #obj[1]
                     txt = {"time_lag": self.t_lag.to_string(), "growth_rate": gr}
                     t_lags_txt.append(txt)
                 json_txt = {"pattern": str(self.pattern.get_tuples()), "type": "Emerging TGP",
