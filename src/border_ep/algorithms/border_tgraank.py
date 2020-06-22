@@ -18,7 +18,6 @@ Usage:
 """
 
 
-import numpy as np
 from src.border_ep.algorithms.border_diff import gen_set
 
 
@@ -35,8 +34,6 @@ def check_for_pattern(ref_item, R):
         return True
     else:
         return False
-
-# --------------------- CODE FOR EMERGING PATTERNS -------------------------------------------
 
 
 def get_maximal_items(init_list, tlag_list):
