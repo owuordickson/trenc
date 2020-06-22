@@ -98,28 +98,26 @@ class Trenc_TGP(Trenc_GP):
 
             if tgeps is None:
                 tgeps = Trenc_TGP.construct_tgps(GR_matrix, gp1_stamps)
-                for pat in tgeps:
-                    print(pat.get_pattern())
             if tgeps is not None:
                 tgeps = Trenc_TGP.construct_tgps(GR_matrix, gp2_stamps, ep=tgeps)
         return tgeps
 
     @staticmethod
-    def construct_tgps(GR_matrix, gp_tstamps, ep=None):
+    def construct_tgps(GR_matrix, gp_stamps, ep=None):
         tgp = []
+        temp_pats = list()
         size = len(GR_matrix)
-        gp_stamps = gp_tstamps
         for i in range(size):  # all attributes
-            row = gp_stamps[i]
-            for j in range(len(row)):
+            for j in range(2):  # same as p_matrix: + or -
                 # gr = GR_matrix[i][j]
-                col = row[j]
-                for t_stamp in col:
+                col_stamps = gp_stamps[i][j]
+                for t_stamp in col_stamps:
                     pat, gr, gp_stamps = Trenc_TGP.find_same_stamps(t_stamp, gp_stamps, GR_matrix)
                     if not pat:
                         continue
                     pattern = TGEP(pat, t_lag=TimeLag(tstamp=t_stamp[0], supp=t_stamp[1]))
-                    if pattern not in tgp:
+                    if pat.get_tuples() not in temp_pats:
+                        temp_pats.append(pat.get_tuples())
                         tgp.append(pattern)
                         if ep is not None:
                             for k in range(len(ep)):
@@ -127,7 +125,6 @@ class Trenc_TGP(Trenc_GP):
                                 pat1 = obj.get_pattern()  # obj[0]
                                 if sorted(pat1) == sorted(pat.get_pattern()):
                                     ep[k].add_timestamp(t_stamp[0], t_stamp[1], gr)
-                                    # ep[k].append([t_stamp, gr])
         if ep is None:
             return tgp
         else:

@@ -65,9 +65,9 @@ def init_trenc(paths, minSup, ref_item, cores, allow_para, minRep):
 
         if len(gep_list) < 1:  # and len(jep_list) < 1:
             wr_line += 'No emerging patterns found\n'
-        #else:
-        #    for ep in gep_list:
-        #        wr_line += str(ep.jsonify()) + '\n'
+        else:
+            for ep in gep_list:
+                wr_line += str(ep.jsonify()) + '\n'
         wr_line += '\n\n --- end --- \n\n '
         # wr_line += 'RAW PATTERNS\n'
         # for obj in ep_set.GR_list:
