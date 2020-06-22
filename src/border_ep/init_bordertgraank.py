@@ -21,42 +21,53 @@ Description:
 import sys
 from optparse import OptionParser
 from src.border_ep.algorithms.mbdll_border import *
-from src.border_ep.algorithms.border_tgraank import *
-from src.border_ep.algorithms.t_graank import Tgraank
+from src.border_ep.algorithms.t_graank_gr import T_Grad_gr
 
 
 def algorithm_ep_init(filename, ref_item, minsup, minrep, cores, allow_para):
     try:
         wr_line = ''
-        fgp_list = list()  # fuzzy-temporal gradual patterns
 
         # 1. Load dataset into program
-        dataset = DataTransform(filename, ref_item, minrep)
-        tgp = Tgraank(dataset, minsup, ref_item, cores, allow_para)
-        # 2. TRANSFORM DATA (for each step)
-        # for s in range(dataset.max_step):
-        fgp_list = tgp.extract_tgps()
+        tgp = T_Grad_gr(filename, False, ref_item, minsup, minrep, cores)
+        if allow_para == 1:
+            parallel = True
+            msg_parallel = "True"
+        else:
+            parallel = False
+            msg_parallel = False
+        fgp_list = tgp.run_tgraank(parallel=parallel)
 
         if not fgp_list:
             wr_line += "Oops! no frequent patterns were found\n"
             # wr_line += "-------------------------------------"
         else:
             wr_line = "Algorithm: Border-TGRAANK \n"
-            wr_line += "No. of data sets: " + str(dataset.max_step) + '\n'
-            wr_line += "No. of (dataset) attributes: " + str(len(dataset.data[0])) + '\n'
+            wr_line += "No. of data sets: " + str(tgp.max_step) + '\n'
+            wr_line += "No. of (dataset) attributes: " + str(tgp.d_set.column_size) + '\n'
             wr_line += "Minimum support: " + str(minsup) + '\n'
             wr_line += "Minimum representativity: " + str(minrep) + '\n'
-            wr_line += "Multi-core execution: " + str(tgp.msg_parallel) + '\n'
+            wr_line += "Multi-core execution: " + str(msg_parallel) + '\n'
             wr_line += "Number of cores: " + str(cores) + '\n'
             wr_line += '\n\n'
 
-            for line in tgp.title:
-                wr_line += line + '\n'
+            titles = tgp.d_set.title
+            if ref_item is not None:
+                for txt in titles:
+                    col = int(txt[0])
+                    if col == ref_item:
+                        wr_line += (str(col) + '. ' + str(txt[1].decode()) + '**' + '\n')
+                    else:
+                        wr_line += (str(col) + '. ' + str(txt[1].decode()) + '\n')
+            else:
+                for txt in titles:
+                    wr_line += (str(txt[0]) + '. ' + str(txt[1].decode()) + '\n')
+
             wr_line += 'Emerging Pattern | Time Lags: (Transformation n, Transformation m)\n\n'
 
             all_fgps = list()
             for item_list in fgp_list:
-                if len(item_list) > 0:
+                if item_list:  # len(item_list) > 0:
                     for item in item_list[1]:
                         all_fgps.append(item)
                 else:
@@ -70,7 +81,7 @@ def algorithm_ep_init(filename, ref_item, minsup, minrep, cores, allow_para):
                         freq_pattern_1 = all_fgps[i]
                         freq_pattern_2 = all_fgps[j]
                         ep = mbdll_border(tuple(freq_pattern_1[0]), tuple(freq_pattern_2[0]))
-                        tlags = tuple((freq_pattern_1[1], freq_pattern_2[1]))
+                        tlags = tuple((freq_pattern_1[1].to_string(), freq_pattern_2[1].to_string()))
                         if ep:
                             patterns = patterns + 1
                             temp = tuple((ep, tlags))
@@ -120,7 +131,7 @@ if __name__ == "__main__":
         optparser.add_option('-c', '--refColumn',
                              dest='refCol',
                              help='reference column',
-                             default=0,
+                             default=1,
                              type='int')
         optparser.add_option('-s', '--minSupport',
                              dest='minSup',
