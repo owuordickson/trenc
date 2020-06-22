@@ -119,7 +119,7 @@ def get_time_format(value):
     else:
         sign = "+"
     p_value, p_type = round_time(abs(value))
-    p_format = [sign,p_value,p_type]
+    p_format = [sign, p_value, p_type]
     return p_format
 
 

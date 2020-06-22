@@ -148,7 +148,7 @@ class Trenc_TGP(Trenc_GP):
                     pat, gr, gp1_stamps = Trenc_TGP.find_same_stamps(t_stamp, gp_stamps, GR_matrix)
                     if not pat:
                         continue
-                    pattern = TGEP(pat, t_lag=TimeLag(tstamp=t_stamp))
+                    pattern = TGEP(pat, t_lag=TimeLag(tstamp=t_stamp[0], supp=t_stamp[1]))
                     if pattern not in tgp:
                         tgp.append(pattern)
                         if ep is not None:
@@ -156,7 +156,7 @@ class Trenc_TGP(Trenc_GP):
                                 obj = ep[k]
                                 pat1 = obj.get_pattern()  # obj[0]
                                 if sorted(pat1) == sorted(pat.get_pattern()):
-                                    ep[k].add_timestamp(t_stamp, gr)
+                                    ep[k].add_timestamp(t_stamp[0], t_stamp[1], gr)
                                     # ep[k].append([t_stamp, gr])
         if ep is None:
             return False, tgp

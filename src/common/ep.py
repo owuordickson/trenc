@@ -45,5 +45,5 @@ class TGEP(TGP):
         super().__init__(gp, t_lag)
         self.gr_timelags = list()
 
-    def add_timestamp(self, tstamp, gr):
-        self.gr_timelags.append(TimeLag_gr(tstamp=tstamp, gr=gr))
+    def add_timestamp(self, tstamp, sup, gr):
+        self.gr_timelags.append(TimeLag_gr(tstamp=tstamp, supp=sup, gr=gr))
