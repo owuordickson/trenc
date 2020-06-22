@@ -102,7 +102,8 @@ if __name__ == "__main__":
                              dest='file',
                              help='path to file containing csv',
                              # default=None,
-                             default='../data/DATASET.csv',
+                             #default='../data/DATASET.csv',
+                             default='../data/ICU_household_power_consumption1.csv',
                              #default='../data/DATASET.csv, ../data/DATASET1.csv',
                              #default='../data/rain_temp1991-2015.csv, ../data/rain_temp2013-2015.csv',
                              type='string')

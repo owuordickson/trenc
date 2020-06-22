@@ -97,13 +97,15 @@ class Trenc_TGP(Trenc_GP):
 
             if tgeps is None:
                 tgeps = Trenc_TGP.construct_tgps(GR_matrix, gp1_stamps)
-            if tgeps is not None:
-                tgeps = Trenc_TGP.construct_tgps(GR_matrix, gp2_stamps, ep=tgeps)
-        return tgeps
+            tgeps = Trenc_TGP.construct_tgps(GR_matrix, gp2_stamps, ep=tgeps)
+        if tgeps is None:
+            return []
+        else:
+            return tgeps
 
     @staticmethod
     def construct_tgps(GR_matrix, gp_stamps, ep=None):
-        tgp = []
+        tgp = list()
         temp_pats = list()
         size = len(GR_matrix)
         for i in range(size):  # all attributes

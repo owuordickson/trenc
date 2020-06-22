@@ -140,7 +140,7 @@ class TimeLag:
 class TGP(GP):
 
     def __init__(self, gp=GP(), t_lag=TimeLag()):
-        # super().__init__()
+        super().__init__()
         self.gradual_items = gp.gradual_items
         self.support = gp.support
         self.time_lag = t_lag
