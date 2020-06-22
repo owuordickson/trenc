@@ -48,14 +48,14 @@ class Trenc_TGP(Trenc_GP):
 
     def run_trenc(self, set_id=0):
         tgp_list = self.tg_set.run_tgraank(self.allow_parallel)
-        GR_list = Trenc_TGP.gen_GR_matrix(set_id, tgp_list)
-        tgeps = Trenc_TGP.construct_tgeps(GR_list)
+        tgeps = Trenc_TGP.construct_tgeps(set_id, tgp_list)
         return tgeps
 
     @staticmethod
-    def gen_GR_matrix(ds_id, gp_list):
-        GR_list = list()
+    def construct_tgeps(ds_id, gp_list):
+        lst_tgep = None
         if ds_id < len(gp_list):
+            # 1. generate GR matrix
             gp_1 = gp_list[ds_id]
             GR_matrix = gp_1.sup_matrix
             for gp_2 in gp_list:
@@ -71,9 +71,14 @@ class Trenc_TGP(Trenc_GP):
                         temp = np.nan_to_num(temp)  # convert Nan to 0
                     # normalize stamp_matrix
                     gp_2.tstamp_matrix = Trenc_TGP.remove_useless_stamps(temp, gp_2.tstamp_matrix)
-                    GR = [temp, gp_1, gp_2]
-                    GR_list.append(GR)
-            return GR_list
+                    # 2. construct TGEPs
+                    if lst_tgep is None:
+                        lst_tgep = Trenc_TGP.construct_tgps(temp, gp_1.tstamp_matrix)
+                    lst_tgep = Trenc_TGP.construct_tgps(temp, gp_2.tstamp_matrix, ep=lst_tgep)
+            if lst_tgep is None:
+                return []
+            else:
+                return lst_tgep
         else:
             raise Exception("Selected data-set/file does not exist")
 
@@ -90,22 +95,6 @@ class Trenc_TGP(Trenc_GP):
                 if row[1] == 0:
                     stamp_matrix[i][1] = []
             return stamp_matrix
-
-    @staticmethod
-    def construct_tgeps(GR_list):
-        tgeps = None
-        for GR in GR_list:
-            GR_matrix = GR[0]
-            gp1_stamps = GR[1].tstamp_matrix
-            gp2_stamps = GR[2].tstamp_matrix
-
-            if tgeps is None:
-                tgeps = Trenc_TGP.construct_tgps(GR_matrix, gp1_stamps)
-            tgeps = Trenc_TGP.construct_tgps(GR_matrix, gp2_stamps, ep=tgeps)
-        if tgeps is None:
-            return []
-        else:
-            return tgeps
 
     @staticmethod
     def construct_tgps(GR_matrix, gp_stamps, ep=None):

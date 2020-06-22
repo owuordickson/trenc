@@ -120,7 +120,7 @@ class Trenc_GP:
 
     @staticmethod
     def construct_geps(ds_id, gp_list):
-        geps = list()
+        lst_gep = list()
         if ds_id < len(gp_list):
             # 1. generate GR matrix
             gp_1 = gp_list[ds_id]
@@ -136,13 +136,11 @@ class Trenc_GP:
                         # data-sets (JEP), so we remove it by converting it to 0
                         temp[temp == np.inf] = -1  # convert inf to -1
                         temp = np.nan_to_num(temp)  # convert Nan to 0
-                    # GR = [temp, gp_1, gp_2]
-                    # GR_list.append(GR)
-                    # 2. construct EPs
+                    # 2. construct GEPs
                     temp_geps = Trenc_GP.construct_gps(temp)
                     for ep in temp_geps:
-                        geps.append(ep)
-            return geps
+                        lst_gep.append(ep)
+            return lst_gep
         else:
             raise Exception("Selected data-set/file does not exist")
 
