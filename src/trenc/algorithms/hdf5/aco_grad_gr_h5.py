@@ -25,18 +25,15 @@ class GradACOgr_h5(GradACO_h5):
         # fetch previous p_matrix from memory
         grp1 = 'dataset/' + self.d_set.step_name + '/p_matrix'
         grp2 = 'dataset/' + self.d_set.step_name + '/steps_matrix'
-        grp3 = 'dataset/' + self.d_set.step_name + '/sup_matrix'
         p_matrix = self.d_set.read_h5_dataset(grp1)
         steps_matrix = self.d_set.read_h5_dataset(grp2)
-        sup_matrix = self.d_set.read_h5_dataset(grp3)
         if np.sum(p_matrix) > 0:
             self.p_matrix = p_matrix
             self.steps_matrix = steps_matrix
-            self.sup_matrix = sup_matrix
         else:
             self.p_matrix = np.ones((self.d_set.column_size, 3), dtype=float)
             self.steps_matrix = np.zeros((self.d_set.column_size, 3), dtype=int)
-            self.sup_matrix = np.array([])
+        self.sup_matrix = np.array([])
 
     def deposit_pheromone(self, pattern=GP()):
         lst_attr = []
@@ -50,8 +47,8 @@ class GradACOgr_h5(GradACO_h5):
                 self.p_matrix[i][0] += pattern.support
                 self.steps_matrix[i][0] += 1
             elif symbol == '-':
-                self.p_matrix[i][0] += pattern.support
-                self.steps_matrix[i][0] += 1
+                self.p_matrix[i][1] += pattern.support
+                self.steps_matrix[i][1] += 1
         for index in self.attr_index:
             if int(index) not in lst_attr:
                 i = int(index)
@@ -95,6 +92,4 @@ class GradACOgr_h5(GradACO_h5):
         self.d_set.add_h5_dataset(grp, self.p_matrix)
         grp = 'dataset/' + self.d_set.step_name + '/steps_matrix'
         self.d_set.add_h5_dataset(grp, self.steps_matrix)
-        grp = 'dataset/' + self.d_set.step_name + '/sup_matrix'
-        self.d_set.add_h5_dataset(grp, self.sup_matrix)
         return winner_gps

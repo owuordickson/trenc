@@ -38,8 +38,8 @@ class GradACOgr(GradACO):
                 self.p_matrix[i][0] += pattern.support
                 self.steps_matrix[i][0] += 1
             elif symbol == '-':
-                self.p_matrix[i][0] += pattern.support
-                self.steps_matrix[i][0] += 1
+                self.p_matrix[i][1] += pattern.support
+                self.steps_matrix[i][1] += 1
         for index in self.attr_index:
             if int(index) not in lst_attr:
                 i = int(index)

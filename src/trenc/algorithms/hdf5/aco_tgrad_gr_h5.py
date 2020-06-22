@@ -31,22 +31,16 @@ class GradACOt_grH5 (GradACOgr_h5):
         # fetch previous p_matrix from memory
         grp1 = 'dataset/' + self.d_set.step_name + '/p_matrix'
         grp2 = 'dataset/' + self.d_set.step_name + '/steps_matrix'
-        grp3 = 'dataset/' + self.d_set.step_name + '/sup_matrix'
-        grp4 = 'dataset/' + self.d_set.step_name + '/tstamp_matrix'
         p_matrix = self.d_set.read_h5_dataset(grp1)
         steps_matrix = self.d_set.read_h5_dataset(grp2)
-        sup_matrix = self.d_set.read_h5_dataset(grp3)
-        tstamp_matrix = self.d_set.read_h5_dataset(grp4)
         if np.sum(p_matrix) > 0:
             self.p_matrix = p_matrix
             self.steps_matrix = steps_matrix
-            self.sup_matrix = sup_matrix
-            self.tstamp_matrix = tstamp_matrix
         else:
             self.p_matrix = np.ones((self.d_set.column_size, 3), dtype=float)
             self.steps_matrix = np.zeros((self.d_set.column_size, 3), dtype=int)
-            self.sup_matrix = np.array([])
-            self.tstamp_matrix = np.array([[[] for i in range(3)] for j in range(d_set.column_size)])
+        self.sup_matrix = np.array([])
+        self.tstamp_matrix = [[[] for i in range(3)] for j in range(d_set.column_size)]
         self.d_set.update_attributes(attr_data)
 
     def deposit_pheromone(self, pattern=TGP()):
@@ -62,9 +56,9 @@ class GradACOt_grH5 (GradACOgr_h5):
                 self.steps_matrix[i][0] += 1
                 self.tstamp_matrix[i][0].append([pattern.time_lag.timestamp, pattern.time_lag.support])
             elif symbol == '-':
-                self.p_matrix[i][0] += pattern.support
-                self.steps_matrix[i][0] += 1
-                self.tstamp_matrix[i][0].append([pattern.time_lag.timestamp, pattern.time_lag.support])
+                self.p_matrix[i][1] += pattern.support
+                self.steps_matrix[i][1] += 1
+                self.tstamp_matrix[i][1].append([pattern.time_lag.timestamp, pattern.time_lag.support])
         for index in self.attr_index:
             if int(index) not in lst_attr:
                 i = int(index)
@@ -141,10 +135,6 @@ class GradACOt_grH5 (GradACOgr_h5):
         self.d_set.add_h5_dataset(grp, self.p_matrix)
         grp = 'dataset/' + self.d_set.step_name + '/steps_matrix'
         self.d_set.add_h5_dataset(grp, self.steps_matrix)
-        grp = 'dataset/' + self.d_set.step_name + '/sup_matrix'
-        self.d_set.add_h5_dataset(grp, self.sup_matrix)
-        grp = 'dataset/' + self.d_set.step_name + '/tstamp_matrix'
-        self.d_set.add_h5_dataset(grp, self.tstamp_matrix)
         return winner_gps
 
 
@@ -159,7 +149,7 @@ class T_GradACOgrH5(T_GradACOgr):
             print("Dataset Ok")
             self.time_ok = True
             self.time_cols = cols
-            self.min_sup = d_set.thd_sup
+            self.min_sup = d_set.thd_supp
             self.ref_item = ref_item
             self.d_set.data = self.d_set.read_h5_dataset('dataset/data')
             self.d_set.data = np.array(self.d_set.data).astype('U')

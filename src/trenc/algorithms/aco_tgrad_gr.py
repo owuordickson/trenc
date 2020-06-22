@@ -46,9 +46,9 @@ class GradACOt_gr (GradACOgr):
                 self.steps_matrix[i][0] += 1
                 self.tstamp_matrix[i][0].append([pattern.time_lag.timestamp, pattern.time_lag.support])
             elif symbol == '-':
-                self.p_matrix[i][0] += pattern.support
-                self.steps_matrix[i][0] += 1
-                self.tstamp_matrix[i][0].append([pattern.time_lag.timestamp, pattern.time_lag.support])
+                self.p_matrix[i][1] += pattern.support
+                self.steps_matrix[i][1] += 1
+                self.tstamp_matrix[i][1].append([pattern.time_lag.timestamp, pattern.time_lag.support])
         for index in self.attr_index:
             if int(index) not in lst_attr:
                 i = int(index)

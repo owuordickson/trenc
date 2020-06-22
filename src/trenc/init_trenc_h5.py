@@ -95,7 +95,8 @@ if __name__ == "__main__":
         ref_col = sys.argv[2]
         min_sup = sys.argv[3]
         min_rep = sys.argv[4]
-        allow_p = sys.argv[5]
+        ref_ds = sys.argv[5]
+        allow_p = sys.argv[6]
         num_cores = 1
     else:
         optparser = OptionParser()
@@ -103,9 +104,9 @@ if __name__ == "__main__":
                              dest='file',
                              help='path to file containing csv',
                              # default=None,
-                             default='../data/DATASET.csv',
+                             #default='../../data/DATASET.csv',
                              #default='../data/ICU_household_power_consumption1.csv',
-                             #default='../data/DATASET.csv, ../data/DATASET1.csv',
+                             default='../../data/DATASET.csv, ../../data/DATASET1.csv',
                              #default='../data/rain_temp1991-2015.csv, ../data/rain_temp2013-2015.csv',
                              type='string')
         optparser.add_option('-c', '--refColumn',
@@ -121,7 +122,7 @@ if __name__ == "__main__":
         optparser.add_option('-r', '--minRepresentativity',
                              dest='minRep',
                              help='minimum representativity',
-                             default=0.5,
+                             default=0,
                              #default=0,
                              type='float')
         optparser.add_option('-d', '--refDataset',
