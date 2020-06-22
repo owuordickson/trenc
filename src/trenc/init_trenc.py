@@ -26,8 +26,6 @@ from src.trenc.algorithms.trenc_tgp import Trenc_TGP
 
 def init_trenc(paths, minSup, ref_item, cores, allow_para, minRep):
     try:
-        # wr_line = ""
-        # ep_set = Trenc(paths, 0.5)
         if minRep == 0:
             ep_set = Trenc_GP(paths, minSup, cores, allow_para)
         else:
@@ -35,12 +33,15 @@ def init_trenc(paths, minSup, ref_item, cores, allow_para, minRep):
         gep_list = ep_set.run_trenc(0)
 
         wr_line = "Algorithm: TRENC \n"
-        #wr_line += "No. of data sets: " + str(len(ep_set.d_sets)) + '\n'
-        wr_line += "No. of (data set) attributes: " + str(len(ep_set.titles)) + '\n'
         if minRep == 0:
+            wr_line += "Pattern Type: Gradual Emerging Patterns\n"
+            wr_line += "No. of data sets: " + str(len(ep_set.d_sets)) + '\n'
             wr_line += "Size of 1st data set: " + str(ep_set.d_sets[0].size) + '\n'
-        #else:
-        #    wr_line += "Size of 1st data set: " + str(ep_set.d_sets[0][0].size) + '\n'
+        else:
+            wr_line += "Pattern Type: Temporal Gradual Emerging Patterns\n"
+            wr_line += "No. of data sets: " + str(ep_set.tg_set.max_step) + '\n'
+            wr_line += "Size of 1st data set: " + str(ep_set.tg_set.d_set.size) + '\n'
+        wr_line += "No. of (data set) attributes: " + str(len(ep_set.titles)) + '\n'
         wr_line += "Minimum support: " + str(minSup) + '\n'
         wr_line += "Minimum representativity: " + str(minRep) + '\n'
         wr_line += "Multi-core execution: " + str(ep_set.msg_para) + '\n'
@@ -69,12 +70,6 @@ def init_trenc(paths, minSup, ref_item, cores, allow_para, minRep):
             for ep in gep_list:
                 wr_line += str(ep.jsonify()) + '\n'
         wr_line += '\n\n --- end --- \n\n '
-        # wr_line += 'RAW PATTERNS\n'
-        # for obj in ep_set.GR_list:
-        #    wr_line += str(obj[1].extracted_patterns) + '\n'
-        #    wr_line += str(obj[2].extracted_patterns) + '\n'
-        #    wr_line += '\n\n'
-        # print(wr_line)
         return wr_line
     except ArithmeticError as error:
         wr_line = "Failed: " + str(error)
@@ -102,8 +97,8 @@ if __name__ == "__main__":
                              dest='file',
                              help='path to file containing csv',
                              # default=None,
-                             #default='../data/DATASET.csv',
-                             default='../data/ICU_household_power_consumption1.csv',
+                             default='../data/DATASET.csv',
+                             #default='../data/ICU_household_power_consumption1.csv',
                              #default='../data/DATASET.csv, ../data/DATASET1.csv',
                              #default='../data/rain_temp1991-2015.csv, ../data/rain_temp2013-2015.csv',
                              type='string')

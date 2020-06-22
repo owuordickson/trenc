@@ -23,43 +23,37 @@ from ...common.ep import GEP
 class Trenc_GP:
 
     def __init__(self, f_paths, min_sup, cores=0, allow_para=1):
-        self.min_sup = min_sup
-        if cores > 1:
-            self.cores = cores
+        self.paths = Trenc_GP.get_paths(f_paths)
+        if len(self.paths) < 2:
+            raise Exception("File Path Error: less than 2 paths found")
         else:
-            self.cores = Profile.get_num_cores()
-        if allow_para == 0:
-            self.allow_parallel = False
-            self.msg_para = "False"
-        else:
-            self.allow_parallel = True
-            self.msg_para = "True"
+            self.min_sup = min_sup
+            if cores > 1:
+                self.cores = cores
+            else:
+                self.cores = Profile.get_num_cores()
+            if allow_para == 0:
+                self.allow_parallel = False
+                self.msg_para = "False"
+            else:
+                self.allow_parallel = True
+                self.msg_para = "True"
 
-        self.titles = []
-        self.d_sets = self.get_csv_data(f_paths)
-        if len(self.d_sets) <= 1:
-            # Not possible to mine EPs
-            raise Exception("Mining EPs requires at least 2 data sets")
+            self.titles = []
+            self.d_sets = self.get_csv_data()
+            if len(self.d_sets) <= 1:
+                # Not possible to mine EPs
+                raise Exception("Mining EPs requires at least 2 data sets")
 
-    def get_csv_data(self, raw_paths):
-        try:
-            lst_path = [x.strip() for x in raw_paths.split(',')]
-            for path in lst_path:
-                if path == '':
-                    lst_path.remove(path)
-            if len(lst_path) < 2:
-                raise Exception("File Path Error: less than 2 paths found")
-        except ValueError as error:
-            raise Exception("File Path Error: " + str(error))
-
+    def get_csv_data(self):
         if self.allow_parallel:
             num_cores = self.cores
             pool = mp.Pool(num_cores)
-            d_sets = pool.map(self.get_dataset, lst_path)
+            d_sets = pool.map(self.get_dataset, self.paths)
             return d_sets
         else:
             d_sets = list()
-            for path in lst_path:
+            for path in self.paths:
                 d_set = self.get_dataset(path)
                 d_sets.append(d_set)
             return d_sets
@@ -228,3 +222,14 @@ class Trenc_GP:
             if title_1[1] == title_2:
                 return True
         return False
+
+    @staticmethod
+    def get_paths(raw_paths):
+        try:
+            lst_path = [x.strip() for x in raw_paths.split(',')]
+            for path in lst_path:
+                if path == '':
+                    lst_path.remove(path)
+            return lst_path
+        except ValueError as error:
+            raise Exception("File Path Error: " + str(error))

@@ -23,24 +23,28 @@ from ...common.profile_cpu import Profile
 class Trenc_TGP(Trenc_GP):
 
     def __init__(self, f_paths, min_sup, min_rep, ref_item, cores=0, allow_para=1):
-        self.ref_item = ref_item
-        self.min_rep = min_rep
-        self.min_sup = min_sup
-        if cores > 1:
-            self.cores = cores
+        self.paths = Trenc_GP.get_paths(f_paths)
+        if len(self.paths) > 1:
+            raise Exception("File Path Error: more than 1 path found")
         else:
-            self.cores = Profile.get_num_cores()
-        if allow_para == 0:
-            self.allow_parallel = False
-            self.msg_para = "False"
-        else:
-            self.allow_parallel = True
-            self.msg_para = "True"
-        self.GR_list = []
+            self.ref_item = ref_item
+            self.min_rep = min_rep
+            self.min_sup = min_sup
+            if cores > 1:
+                self.cores = cores
+            else:
+                self.cores = Profile.get_num_cores()
+            if allow_para == 0:
+                self.allow_parallel = False
+                self.msg_para = "False"
+            else:
+                self.allow_parallel = True
+                self.msg_para = "True"
+            self.GR_list = []
 
-        d_set = self.get_dataset(f_paths)
-        self.tg_set = T_GradACOgr(d_set, ref_item, min_rep, self.cores)
-        self.titles = d_set.title
+            d_set = self.get_dataset(f_paths)
+            self.tg_set = T_GradACOgr(d_set, ref_item, min_rep, self.cores)
+            self.titles = d_set.title
 
     def run_trenc(self, set_id=0):
         tgp_list = self.tg_set.run_tgraank(self.allow_parallel)
