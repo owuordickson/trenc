@@ -32,7 +32,7 @@ def init_trenc(paths, minSup, ref_item, cores, allow_para, minRep):
             ep_set = Trenc_GP(paths, minSup, cores, allow_para)
         else:
             ep_set = Trenc_TGP(paths, minSup, minRep, ref_item, cores, allow_para)
-        gep_list, jep_list = ep_set.run_trenc(0)
+        gep_list = ep_set.run_trenc(0)
 
         wr_line = "Algorithm: TRENC \n"
         #wr_line += "No. of data sets: " + str(len(ep_set.d_sets)) + '\n'
@@ -45,6 +45,7 @@ def init_trenc(paths, minSup, ref_item, cores, allow_para, minRep):
         wr_line += "Minimum representativity: " + str(minRep) + '\n'
         wr_line += "Multi-core execution: " + str(ep_set.msg_para) + '\n'
         wr_line += "Number of cores: " + str(ep_set.cores) + '\n'
+        wr_line += "Number of patterns: " + str(len(gep_list)) + '\n'
         wr_line += '\n\n'
 
         titles = ep_set.titles
@@ -64,11 +65,9 @@ def init_trenc(paths, minSup, ref_item, cores, allow_para, minRep):
 
         if len(gep_list) < 1:  # and len(jep_list) < 1:
             wr_line += 'No emerging patterns found\n'
-        else:
-            for ep in gep_list:
-                wr_line += str(ep.format_info()) + '\n'
-            for jep in jep_list:
-                wr_line += str(jep.format_info()) + '\n'
+        #else:
+        #    for ep in gep_list:
+        #        wr_line += str(ep.jsonify()) + '\n'
         wr_line += '\n\n --- end --- \n\n '
         # wr_line += 'RAW PATTERNS\n'
         # for obj in ep_set.GR_list:

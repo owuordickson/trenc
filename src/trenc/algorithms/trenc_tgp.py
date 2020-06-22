@@ -90,62 +90,32 @@ class Trenc_TGP(Trenc_GP):
 
     @staticmethod
     def construct_tgeps(GR_list):
-        eps = list()
-        jeps = list()
-        raw_ep1 = None
+        tgeps = None
         for GR in GR_list:
             GR_matrix = GR[0]
             gp1_stamps = GR[1].tstamp_matrix
             gp2_stamps = GR[2].tstamp_matrix
 
-            if raw_ep1 is None:
-                ok, raw_ep1 = Trenc_TGP.construct_tgps(GR_matrix, gp1_stamps)
-            if raw_ep1 is not None:
-                raw_ep1, raw_ep2 = Trenc_TGP.construct_tgps(GR_matrix, gp2_stamps, ep=raw_ep1)
-
-        if raw_ep1 is not None:
-            temp_eps, temp_jeps = Trenc_TGP.fetch_eps(raw_ep1)
-            for ep in temp_eps:
-                eps.append(ep)
-            for jep in temp_jeps:
-                jeps.append(jep)
-        return eps, jeps
-
-    @staticmethod
-    def fetch_eps(raw_ep):
-        eps = list()
-        jeps = list()
-        for pat in raw_ep:
-            count = len(pat.gradual_items)
-            if count == 2:
-                # this a 'Jumping Emerging Pattern'
-                gp = pat #pat[0]
-                t_lag1 = pat.time_lag #pat[1]
-                jep = JEP(gp, t_lag1)
-                jeps.append(jep)
-            else:
-                # a normal 'Emerging Pattern'
-                gp = pat # pat[0]
-                t_lag1 = pat.time_lag # pat[1]
-                t_lags = pat.gr_timelags #[]
-                #for i in range(2, count, 1):
-                #    t_lags.append(pat[i])
-                ep = EP(gp, 0, t_lag1, t_lags)
-                eps.append(ep)
-        return eps, jeps
+            if tgeps is None:
+                tgeps = Trenc_TGP.construct_tgps(GR_matrix, gp1_stamps)
+                for pat in tgeps:
+                    print(pat.get_pattern())
+            if tgeps is not None:
+                tgeps = Trenc_TGP.construct_tgps(GR_matrix, gp2_stamps, ep=tgeps)
+        return tgeps
 
     @staticmethod
     def construct_tgps(GR_matrix, gp_tstamps, ep=None):
         tgp = []
         size = len(GR_matrix)
         gp_stamps = gp_tstamps
-        for i in range(size):
+        for i in range(size):  # all attributes
             row = gp_stamps[i]
             for j in range(len(row)):
                 # gr = GR_matrix[i][j]
                 col = row[j]
                 for t_stamp in col:
-                    pat, gr, gp1_stamps = Trenc_TGP.find_same_stamps(t_stamp, gp_stamps, GR_matrix)
+                    pat, gr, gp_stamps = Trenc_TGP.find_same_stamps(t_stamp, gp_stamps, GR_matrix)
                     if not pat:
                         continue
                     pattern = TGEP(pat, t_lag=TimeLag(tstamp=t_stamp[0], supp=t_stamp[1]))
@@ -159,9 +129,9 @@ class Trenc_TGP(Trenc_GP):
                                     ep[k].add_timestamp(t_stamp[0], t_stamp[1], gr)
                                     # ep[k].append([t_stamp, gr])
         if ep is None:
-            return False, tgp
+            return tgp
         else:
-            return ep, tgp
+            return ep
 
     @staticmethod
     def find_same_stamps(t_stamp, stamp_matrix, GR_matrix):
@@ -171,17 +141,14 @@ class Trenc_TGP(Trenc_GP):
         size = len(stamp_matrix)
         for i in range(size):
             attr = i
-            row = stamp_matrix[i]
-            for j in range(len(row)):
+            for j in range(2):  # similar to p_matrix
                 stamps = stamp_matrix[i][j]
                 if t_stamp in stamps:
                     # print([t_stamp, stamps, 'true'])
                     if j == 0:
                         sign = '+'
-                    elif j == 1:
-                        sign = '-'
                     else:
-                        continue
+                        sign = '-'
                     gi = GI(attr, sign)
                     if (gi not in patterns.gradual_items) and (attr not in attrs):
                         attrs.append(attr)

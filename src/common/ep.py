@@ -47,3 +47,17 @@ class TGEP(TGP):
 
     def add_timestamp(self, tstamp, sup, gr):
         self.gr_timelags.append(TimeLag_gr(tstamp=tstamp, supp=sup, gr=gr))
+
+    def jsonify(self):
+        if len(self.gr_timelags) <= 0:
+            json_txt = {"pattern": str(self.get_tuples()),
+                        "type": "Jumping Emerging TGP",
+                        "time_lag": self.time_lag.to_string()}
+        else:
+            t_lags_txt = []
+            for gr_tlag in self.gr_timelags:
+                txt = {"time_lag": gr_tlag.to_string(), "growth_rate": gr_tlag.growth_rate}
+                t_lags_txt.append(txt)
+            json_txt = {"pattern": str(self.get_tuples()), "type": "Emerging TGP",
+                        "time_lag": self.time_lag.to_string(), "emergence": t_lags_txt}
+        return json.dumps(json_txt, indent=4)
