@@ -199,7 +199,7 @@ class Trenc_GP:
                 for j in range(i+1, size, 1):
                     row_j = GR_matrix[j]
                     pat = Trenc_GP.combine_gps(pat, row_j, j)
-                if len(pat[0].gradual_items) > 1:
+                if (len(pat) > 0) and len(pat[0].gradual_items) > 1:
                     if pat[1] == -1:
                         gep = GEP(pat[0])
                     else:

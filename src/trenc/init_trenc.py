@@ -132,7 +132,7 @@ if __name__ == "__main__":
         optparser.add_option('-p', '--allowMultiprocessing',
                              dest='allowPara',
                              help='allow multiprocessing',
-                             default=1,
+                             default=0,
                              type='int')
         optparser.add_option('-m', '--cores',
                              dest='numCores',
