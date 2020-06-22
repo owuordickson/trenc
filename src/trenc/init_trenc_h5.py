@@ -116,7 +116,7 @@ if __name__ == "__main__":
         optparser.add_option('-s', '--minSupport',
                              dest='minSup',
                              help='minimum support value',
-                             default=0.5,
+                             default=0,
                              type='float')
         optparser.add_option('-r', '--minRepresentativity',
                              dest='minRep',
