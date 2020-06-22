@@ -22,12 +22,13 @@ from ...common.ep import GEP
 
 class Trenc_GP:
 
-    def __init__(self, f_paths, min_sup, cores=0, allow_para=1):
+    def __init__(self, f_paths, min_sup, ref_dset_id, cores=0, allow_para=1):
         self.paths = Trenc_GP.get_paths(f_paths)
         if len(self.paths) < 2:
             raise Exception("File Path Error: less than 2 paths found")
         else:
             self.min_sup = min_sup
+            self.ref_ds_id = ref_dset_id
             if cores > 1:
                 self.cores = cores
             else:
@@ -40,6 +41,7 @@ class Trenc_GP:
                 self.msg_para = "True"
 
             self.titles = []
+            self.ref_dset = []
             self.d_sets = self.get_csv_data()
             if len(self.d_sets) <= 1:
                 # Not possible to mine EPs
@@ -62,15 +64,21 @@ class Trenc_GP:
         d_set = Dataset(path, self.min_sup, eq=False)
         return d_set
 
-    def run_trenc(self, set_id=0):
+    def run_trenc(self):
         # test titles
         ok = self.check_ds_titles()
         if not ok:
             raise Exception("Data sets have different columns")
         else:
             gp_list = self.fetch_gps()
-            geps = Trenc_GP.construct_geps(set_id, gp_list)
-            return geps
+            if (self.ref_ds_id >= 0) and (self.ref_ds_id < len(gp_list)):
+                self.ref_dset = gp_list[self.ref_ds_id]
+                geps = self.fetch_eps(gp_list)
+                # geps = Trenc_GP.construct_eps(set_id, gp_list)
+                return geps
+            else:
+                # raise Exception("Selected data-set/file does not exist")
+                raise Exception("Selected reference data set id (-d) out of range")
 
     def check_ds_titles(self):
         for d_set in self.d_sets:
@@ -101,6 +109,18 @@ class Trenc_GP:
                 aco_objs.append(obj)
         return aco_objs
 
+    def fetch_eps(self, gp_list):
+        if self.allow_parallel:
+            num_cores = self.cores
+            pool = mp.Pool(num_cores)
+            lst_eps = pool.map(self.construct_eps, gp_list)
+        else:
+            lst_eps = list()
+            for gp_obj in gp_list:
+                obj = self.construct_eps(gp_obj)
+                lst_eps.append(obj)
+        return lst_eps
+
     @staticmethod
     def extract_gps(d_set):
         ac = GradACOgr(d_set)
@@ -118,31 +138,25 @@ class Trenc_GP:
         #    print(str(p.to_string()) + str(p.support))
         return ac
 
-    @staticmethod
-    def construct_geps(ds_id, gp_list):
+    def construct_eps(self, gp_2):
         lst_gep = list()
-        if ds_id < len(gp_list):
-            # 1. generate GR matrix
-            gp_1 = gp_list[ds_id]
-            GR_matrix = gp_1.sup_matrix
-            for gp_2 in gp_list:
-                matrix = gp_2.sup_matrix
-                if np.array_equal(GR_matrix, matrix):
-                    continue
-                else:
-                    with np.errstate(divide='ignore', invalid='ignore'):
-                        temp = np.true_divide(GR_matrix, matrix)
-                        # inf means that the pattern is missing in 1 or more
-                        # data-sets (JEP), so we remove it by converting it to 0
-                        temp[temp == np.inf] = -1  # convert inf to -1
-                        temp = np.nan_to_num(temp)  # convert Nan to 0
-                    # 2. construct GEPs
-                    temp_geps = Trenc_GP.construct_gps(temp)
-                    for ep in temp_geps:
-                        lst_gep.append(ep)
-            return lst_gep
+        # 1. generate GR matrix
+        GR_matrix = self.ref_dset.sup_matrix
+        matrix = gp_2.sup_matrix
+        if np.array_equal(GR_matrix, matrix):
+            return False
         else:
-            raise Exception("Selected data-set/file does not exist")
+            with np.errstate(divide='ignore', invalid='ignore'):
+                temp = np.true_divide(GR_matrix, matrix)
+                # inf means that the pattern is missing in 1 or more
+                # data-sets (JEP), so we remove it by converting it to 0
+                temp[temp == np.inf] = -1  # convert inf to -1
+                temp = np.nan_to_num(temp)  # convert Nan to 0
+            # 2. construct GEPs
+            temp_geps = Trenc_GP.construct_gps(temp)
+            for ep in temp_geps:
+                lst_gep.append(ep)
+            return lst_gep
 
     @staticmethod
     def construct_gps(GR_matrix):

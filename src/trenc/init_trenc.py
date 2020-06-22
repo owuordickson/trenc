@@ -24,13 +24,13 @@ from src.trenc.algorithms.trenc_gp import Trenc_GP
 from src.trenc.algorithms.trenc_tgp import Trenc_TGP
 
 
-def init_trenc(paths, minSup, ref_item, cores, allow_para, minRep):
+def init_trenc(paths, minSup, ref_item, ref_dset, cores, allow_para, minRep):
     try:
         if minRep == 0:
-            ep_set = Trenc_GP(paths, minSup, cores, allow_para)
+            ep_set = Trenc_GP(paths, minSup, ref_dset, cores, allow_para)
         else:
-            ep_set = Trenc_TGP(paths, minSup, minRep, ref_item, cores, allow_para)
-        gep_list = ep_set.run_trenc(0)
+            ep_set = Trenc_TGP(paths, minSup, minRep, ref_item, ref_dset, cores, allow_para)
+        gep_list = ep_set.run_trenc()
 
         wr_line = "Algorithm: TRENC \n"
         if minRep == 0:
@@ -67,8 +67,14 @@ def init_trenc(paths, minSup, ref_item, cores, allow_para, minRep):
         if len(gep_list) < 1:  # and len(jep_list) < 1:
             wr_line += 'No emerging patterns found\n'
         else:
-            for ep in gep_list:
-                wr_line += str(ep.jsonify()) + '\n'
+            if min_rep == 0:
+                for obj in gep_list:
+                    if obj:
+                        for ep in obj:
+                            wr_line += str(ep.jsonify()) + '\n'
+            else:
+                for ep in gep_list:
+                    wr_line += str(ep.jsonify()) + '\n'
         wr_line += '\n\n --- end --- \n\n '
         return wr_line
     except ArithmeticError as error:
@@ -118,6 +124,11 @@ if __name__ == "__main__":
                              default=0.5,
                              #default=0,
                              type='float')
+        optparser.add_option('-d', '--refDataset',
+                             dest='refDset',
+                             help='reference data set',
+                             default=0,
+                             type='int')
         optparser.add_option('-p', '--allowMultiprocessing',
                              dest='allowPara',
                              help='allow multiprocessing',
@@ -140,12 +151,13 @@ if __name__ == "__main__":
         ref_col = options.refCol
         min_sup = options.minSup
         min_rep = options.minRep
+        ref_ds = options.refDset
         allow_p = options.allowPara
         num_cores = options.numCores
 
     import time
     start = time.time()
-    res_text = init_trenc(file_path, min_sup, ref_col, num_cores, allow_p, min_rep)
+    res_text = init_trenc(file_path, min_sup, ref_col, ref_ds, num_cores, allow_p, min_rep)
     end = time.time()
 
     wr_text = ("Run-time: " + str(end - start) + " seconds\n")

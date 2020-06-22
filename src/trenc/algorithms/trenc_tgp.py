@@ -22,7 +22,7 @@ from ...common.profile_cpu import Profile
 
 class Trenc_TGP(Trenc_GP):
 
-    def __init__(self, f_paths, min_sup, min_rep, ref_item, cores=0, allow_para=1):
+    def __init__(self, f_paths, min_sup, min_rep, ref_item, ref_dset_id, cores=0, allow_para=1):
         self.paths = Trenc_GP.get_paths(f_paths)
         if len(self.paths) > 1:
             raise Exception("File Path Error: more than 1 path found")
@@ -30,6 +30,7 @@ class Trenc_TGP(Trenc_GP):
             self.ref_item = ref_item
             self.min_rep = min_rep
             self.min_sup = min_sup
+            self.ref_ds_id = ref_dset_id
             if cores > 1:
                 self.cores = cores
             else:
@@ -40,23 +41,22 @@ class Trenc_TGP(Trenc_GP):
             else:
                 self.allow_parallel = True
                 self.msg_para = "True"
-            self.GR_list = []
 
+            self.ref_dset = []
             d_set = self.get_dataset(f_paths)
             self.tg_set = T_GradACOgr(d_set, ref_item, min_rep, self.cores)
             self.titles = d_set.title
 
-    def run_trenc(self, set_id=0):
+    def run_trenc(self):
         tgp_list = self.tg_set.run_tgraank(self.allow_parallel)
-        tgeps = Trenc_TGP.construct_tgeps(set_id, tgp_list)
+        tgeps = self.construct_eps(tgp_list)
         return tgeps
 
-    @staticmethod
-    def construct_tgeps(ds_id, gp_list):
+    def construct_eps(self, gp_list):
         lst_tgep = None
-        if ds_id < len(gp_list):
+        if self.ref_ds_id < len(gp_list):
             # 1. generate GR matrix
-            gp_1 = gp_list[ds_id]
+            gp_1 = gp_list[self.ref_ds_id]
             GR_matrix = gp_1.sup_matrix
             for gp_2 in gp_list:
                 matrix = gp_2.sup_matrix
