@@ -2,7 +2,7 @@
 """
 @author: "Dickson OWUOR"
 @credits: "Anne LAURENT, Joseph ORERO"
-@version: "1.0"
+@version: "2.0"
 @email: "owuordickson@gmail.com"
 @created: "17 March 2020"
 
