@@ -11,8 +11,8 @@
 """
 
 import numpy as np
-from ...common.aco_grad import GradACO
-from ...common.gp import GP
+from .common.aco_grad import GradACO
+from .common.gp import GP
 
 
 class GradACOgr(GradACO):

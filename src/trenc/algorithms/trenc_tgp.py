@@ -14,9 +14,9 @@ This algorithm implements and modifies
 import numpy as np
 from .trenc_gp import Trenc_GP
 from .aco_tgrad_gr import T_GradACOgr
-from ...common.gp import GI, GP, TimeLag
-from ...common.ep import TGEP
-from ...common.profile_cpu import Profile
+from .common.gp import GI, GP, TimeLag
+from .common.ep import TGEP
+from .common.profile_cpu import Profile
 
 
 class Trenc_TGP(Trenc_GP):

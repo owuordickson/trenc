@@ -13,8 +13,8 @@ Description: updated version that uses aco-graank and parallel multi-processing
 
 """
 
-from ...common.graank_v2 import graank
-from ...common.t_graank import Tgrad
+from .common.graank_v2 import graank
+from .common.t_graank import Tgrad
 from .border_tgraank import check_for_pattern, get_maximal_items
 
 

@@ -15,9 +15,9 @@ Description: updated version that uses aco-graank and parallel multi-processing
 
 import numpy as np
 from .aco_grad_gr import GradACOgr
-from ...common.aco_tgrad import T_GradACO
-from ...common.fuzzy_mf import calculate_time_lag
-from ...common.gp import GP, TGP
+from .common.aco_tgrad import T_GradACO
+from .common.fuzzy_mf import calculate_time_lag
+from .common.gp import GP, TGP
 
 
 class GradACOt_gr (GradACOgr):

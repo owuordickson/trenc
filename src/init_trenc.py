@@ -20,8 +20,8 @@ Description:
 
 import sys
 from optparse import OptionParser
-from src.trenc.algorithms.trenc_gp import Trenc_GP
-from src.trenc.algorithms.trenc_tgp import Trenc_TGP
+from trenc.algorithms.trenc_gp import Trenc_GP
+from trenc.algorithms.trenc_tgp import Trenc_TGP
 
 
 def init_trenc(paths, minSup, ref_item, ref_dset, cores, allow_para, minRep):

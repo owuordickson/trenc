@@ -13,11 +13,11 @@ This algorithm implements and modifies
 
 import multiprocessing as mp
 import numpy as np
-from ...common.profile_cpu import Profile
-from ...common.dataset import Dataset
+from .common.profile_cpu import Profile
+from .common.dataset import Dataset
 from .aco_grad_gr import GradACOgr
-from ...common.gp import GI, GP
-from ...common.ep import GEP
+from .common.gp import GI, GP
+from .common.ep import GEP
 
 
 class Trenc_GP:

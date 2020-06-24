@@ -9,5 +9,5 @@ before_install:
 install: pip install -r requirements.txt
 
 script:
-  - python3 src/trenc/init_trenc.py -f data/DATASET.csv
-  - python3 src/border_ep/init_bordertgraank.py -f data/DATASET.csv
+  - python3 src/init_trenc.py -f data/DATASET.csv
+  - python3 src/init_bordertgraank.py -f data/DATASET.csv
