@@ -20,8 +20,8 @@ Description:
 
 import sys
 from optparse import OptionParser
-from src.border_ep.algorithms.mbdll_border import *
-from src.border_ep.algorithms.t_graank_gr import T_Grad_gr
+from border_ep.algorithms.mbdll_border import *
+from border_ep.algorithms.t_graank_gr import T_Grad_gr
 
 
 def algorithm_ep_init(filename, ref_item, minsup, minrep, cores, allow_para):
